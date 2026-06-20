@@ -1,5 +1,4 @@
 [
-
   {
     "ticker": "MSFT",
     "nombre": "Microsoft Corp.",
@@ -7,7 +6,6 @@
     "sector": "Tecnología",
     "descripcion": "Gigante tecnológico enfocado en software, computación en la nube (Azure) e IA."
   },
-
   {
     "ticker": "AMZN",
     "nombre": "Amazon.com, Inc.",
@@ -15,7 +13,6 @@
     "sector": "Consumo Cíclico",
     "descripcion": "Líder global en comercio electrónico, logística y servicios en la nube (AWS)."
   },
-  
   {
     "ticker": "NVDA",
     "nombre": "NVIDIA Corp.",
@@ -23,7 +20,6 @@
     "sector": "Semiconductores",
     "descripcion": "Líder absoluto en unidades de procesamiento gráfico (GPU) e infraestructura para Inteligencia Artificial."
   },
-  
   {
     "ticker": "GOOGL",
     "nombre": "Alphabet Inc.",
@@ -31,7 +27,6 @@
     "sector": "Tecnología",
     "descripcion": "Matriz de Google, líder en búsquedas web, publicidad digital, YouTube e Inteligencia Artificial."
   },
-  
   {
     "ticker": "META",
     "nombre": "Meta Platforms, Inc.",
@@ -39,7 +34,6 @@
     "sector": "Tecnología",
     "descripcion": "Propietaria de Facebook, Instagram, WhatsApp y pionera en el desarrollo del Metaverso."
   },
-  
   {
     "ticker": "NFLX",
     "nombre": "Netflix, Inc.",
@@ -47,47 +41,46 @@
     "sector": "Entretenimiento",
     "descripcion": "El servicio de streaming de entretenimiento por suscripción líder en el mundo."
   },
-  
   {
+    "ticker": "AMAT",
+    "nombre": "Applied Materials",
+    "ratio": 5,
+    "sector": "Semiconductores",
+    "descripcion": "Proveedor global líder en ingeniería de materiales y equipos para la fabricación de chips y pantallas avanzadas."
+  },
+  {
+    "ticker": "ASML",
+    "nombre": "ASML Holding NV",
+    "ratio": 146,
+    "sector": "Semiconductores",
+    "descripcion": "Compañía neerlandesa líder clave en la fabricación de sistemas de fotolitografía para la producción de microchips."
+  },
+  {
+    "ticker": "LRCX",
+    "nombre": "Lam Research corp.",
+    "ratio": 56,
+    "sector": "Semiconductores",
+    "descripcion": "Proveedor especializado en equipos de deposición y grabado para la fabricación de obleas en la industria de semiconductores."
+  },
+  {
+    "ticker": "ORLY",
+    "nombre": "Oreilly Automotive",
+    "ratio": 222,
+    "sector": "Consumo Cíclico",
+    "descripcion": "Cadena minorista estadounidense especializada en la venta y distribución de repuestos, herramientas y accesorios automotrices."
+  },
+  {
+    "ticker": "V",
+    "nombre": "Visa Inc.",
+    "ratio": 18,
+    "sector": "Servicios Financieros",
+    "descripcion": "Red global de tecnología de pagos que facilita transferencias electrónicas de fondos en todo el mundo."
+  },
+    {
     "ticker": "IBIT",
     "nombre": "iShares Bitcoin Trust",
     "ratio": 10,
     "sector": "ETF",
     "descripcion": "ETF spot que replica el precio del Bitcoin (BTC) en el mercado institucional."
-  },
-  {
-    "ticker": "AMAT",
-    "nombre": "Applied Matterials",
-    "ratio": 5,
-    "sector": "VER",
-    "descripcion": "completar"
-  },
-   {
-    "ticker": "ASML",
-    "nombre": "ASML Holding NV",
-    "ratio": 5,
-    "sector": "VER",
-    "descripcion": "completar"
-  },
-   {
-    "ticker": "LRCX",
-    "nombre": "Lam Research corp.",
-    "ratio": 5,
-    "sector": "VER",
-    "descripcion": "completar"
-  },
-   {
-    "ticker": "ORLY",
-    "nombre": "Oreilly Automotive",
-    "ratio": 5,
-    "sector": "VER",
-    "descripcion": "completar"
-  },
-   {
-    "ticker": "V",
-    "nombre": "Visa Inc.",
-    "ratio": 5,
-    "sector": "VER",
-    "descripcion": "completar"
   }
 ]
