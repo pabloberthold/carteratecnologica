@@ -5,11 +5,12 @@
 
 // --- STATE MANAGEMENT ---
 const state = {
-  cedears: [],             // Loaded from JSON / Default list
-  selectedTicker: 'AAPL',  // Currently active ticker
+  cedears: [],             // Loaded from cedears.json
+  obligaciones: [],        // Loaded from obligaciones.json
+  selectedTicker: 'IBIT',  // Currently active ticker (Default: IBIT)
   timeframe: { range: '1y', interval: '1d' }, // Presets: range, interval
   chartMode: 'USD',        // 'USD' (US Stock), 'ARS' (CEDEAR local), 'CCL' (Implicit Dollar)
-  favorites: ['AAPL', 'MSFT', 'MELI', 'TSLA', 'SPY'], // Default favorites
+  favorites: ['IBIT', 'AAPL', 'MSFT', 'MELI', 'YMCHO', 'YCA6O'], // Default favorites
   dolarRates: {
     ccl: 1250,
     mep: 1220,
@@ -31,7 +32,9 @@ const state = {
   candlestickSeries: null,
   volumeSeries: null,
   searchQuery: '',
-  activeCategory: 'ALL'   // 'ALL', 'TECH', 'FINANCE', 'ENERGY', 'ETF', 'FAVORITES'
+  showFavoritesOnly: false, // Checkbox Ver Favoritos
+  cedearsOpen: true,        // Accordion CEDEARs state
+  onsOpen: true             // Accordion ONs state
 };
 
 // --- DEFAULT SEED DATA (FALLBACK & INITIALIZATION) ---
@@ -45,7 +48,7 @@ const DEFAULT_CEDEARS = [
   { "ticker": "GOOGL", "nombre": "Alphabet Inc.", "ratio": 58, "sector": "Tecnología", "descripcion": "Matriz de Google, líder en búsquedas, publicidad, YouTube e IA." },
   { "ticker": "META", "nombre": "Meta Platforms, Inc.", "ratio": 24, "sector": "Tecnología", "descripcion": "Propietaria de Facebook, Instagram, WhatsApp y líder en el Metaverso." },
   { "ticker": "KO", "nombre": "The Coca-Cola Co.", "ratio": 5, "sector": "Consumo No Cíclico", "descripcion": "La compañía de bebidas no alcohólicas más grande del mundo." },
-  { "ticker": "JPM", "nombre": "JPMorgan Chase & Co.", "ratio": 10, "sector": "Finanzas", "descripcion": "El banco más grande de EE.UU. y líder en servicios financieros globales." },
+  { "ticker": "JPM", "nombre": "JPMorgan Chase &压, "ratio": 10, "sector": "Finanzas", "descripcion": "El banco más grande de EE.UU. y líder en servicios financieros globales." },
   { "ticker": "BRK-B", "nombre": "Berkshire Hathaway Inc.", "ratio": 90, "sector": "Finanzas", "descripcion": "Conglomerado de inversión diversificado dirigido por Warren Buffett." },
   { "ticker": "DIS", "nombre": "The Walt Disney Co.", "ratio": 12, "sector": "Entretenimiento", "descripcion": "Líder mundial en entretenimiento familiar, parques temáticos y streaming." },
   { "ticker": "WMT", "nombre": "Walmart Inc.", "ratio": 9, "sector": "Consumo No Cíclico", "descripcion": "La cadena de hipermercados minoristas más grande del mundo." },
@@ -63,16 +66,30 @@ const DEFAULT_CEDEARS = [
   { "ticker": "ETHA", "nombre": "iShares Ethereum Trust", "ratio": 5, "sector": "ETF", "descripcion": "ETF spot administrado por BlackRock para replicar el precio de Ether." }
 ];
 
+const DEFAULT_ONS = [
+  { "ticker": "YMCHO", "nombre": "YPF S.A. Clase I 2026 (YMCHO)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de YPF S.A. garantizada por exportaciones, vencimiento en 2026 con cupón del 9.00% anual en dólares." },
+  { "ticker": "YCA6O", "nombre": "YPF S.A. Clase XVI 2025 (YCA6O)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de YPF S.A. Ley NY, vencimiento en 2025 con cupón del 8.50% anual en dólares." },
+  { "ticker": "YMCJQ", "nombre": "YPF S.A. Clase XVII 2033 (YMCJQ)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de YPF S.A. de largo plazo, vencimiento en 2033 con cupón escalonado hasta 9.00% en dólares." },
+  { "ticker": "TLC5O", "nombre": "Telecom Argentina Clase 5 2025 (TLC5O)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de Telecom Argentina Ley NY, vencimiento en 2025 con cupón del 8.50% anual en dólares." },
+  { "ticker": "TLC1O", "nombre": "Telecom Argentina Clase 1 2026 (TLC1O)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de Telecom Argentina Ley NY, vencimiento en 2026 con cupón del 8.00% anual en dólares." },
+  { "ticker": "CS34O", "nombre": "Cresud Clase XXXIX 2026 (CS34O)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de Cresud (Agropecuaria e Inmobiliaria), vencimiento en 2026 con cupón del 8.00% en dólares." },
+  { "ticker": "PGC2O", "nombre": "Pampa Energía Clase 2 2027 (PGC2O)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de Pampa Energía (Generación y Gas), vencimiento en 2027 con cupón del 9.125% en dólares." },
+  { "ticker": "MTCGO", "nombre": "Mastellone Hnos Clase G 2026 (MTCGO)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de Mastellone Hermanos (La Serenísima), vencimiento en 2026 con cupón del 10.95% en dólares." },
+  { "ticker": "GNCXO", "nombre": "Genneia Clase XXXVIII 2027 (GNCXO)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON Verde de Genneia (Energías Renovables), vencimiento en 2027 con cupón del 8.75% en dólares." },
+  { "ticker": "IRC1O", "nombre": "IRSA Clase XIV 2028 (IRC1O)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de IRSA Inversiones y Representaciones, vencimiento en 2028 con cupón del 8.75% en dólares." },
+  { "ticker": "MRCJO", "nombre": "MSU Energy Clase XI 2025 (MRCJO)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de MSU Energy (Generación Térmica), vencimiento en 2025 con cupón del 7.35% en dólares." }
+];
+
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', async () => {
   setupInitialState();
   initThemeAndDOM();
-  await loadCedearDatabase();
+  await loadDatabases();
   await fetchDolarRates();
   initTradingViewChart();
   setupEventListeners();
   
-  // Load default ticker
+  // Load default ticker (IBIT)
   await loadActiveTickerData(state.selectedTicker);
   updateTickerTape();
 });
@@ -100,37 +117,47 @@ function setupInitialState() {
   }
   
   state.cedears = [...DEFAULT_CEDEARS];
+  state.obligaciones = [...DEFAULT_ONS];
 }
 
 // --- DOM ELEMENT CACHE & INITIAL THEME ---
 function initThemeAndDOM() {
-  // Setup Lucide Icons
   if (typeof lucide !== 'undefined') {
     lucide.createIcons();
   }
 }
 
-// --- FETCH CEDEAR DATABASE (LOCAL FETCH OR FALLBACK) ---
-async function loadCedearDatabase() {
+// --- FETCH CEDEAR & ON DATABASES (LOCAL FETCH OR FALLBACK) ---
+async function loadDatabases() {
   try {
-    const response = await fetch('cedears.json');
-    if (!response.ok) throw new Error("Could not fetch local JSON");
-    const data = await response.json();
-    if (Array.isArray(data) && data.length > 0) {
-      state.cedears = data;
-      console.log("Database loaded successfully from cedears.json");
+    const responseCed = await fetch('cedears.json');
+    if (responseCed.ok) {
+      const dataCed = await responseCed.json();
+      if (Array.isArray(dataCed) && dataCed.length > 0) state.cedears = dataCed;
     }
   } catch (e) {
-    console.warn("Using embedded default CEDEAR database (CORS or file system restriction)", e);
-    // Already pre-populated in setupInitialState
+    console.warn("Using embedded default CEDEAR database", e);
   }
   
-  // Merge custom ratios into active cedears list
-  state.cedears = state.cedears.map(c => {
-    if (state.customRatios[c.ticker]) {
-      return { ...c, ratio: state.customRatios[c.ticker] };
+  try {
+    const responseOn = await fetch('obligaciones.json');
+    if (responseOn.ok) {
+      const dataOn = await responseOn.json();
+      if (Array.isArray(dataOn) && dataOn.length > 0) state.obligaciones = dataOn;
     }
+  } catch (e) {
+    console.warn("Using embedded default ON database", e);
+  }
+  
+  // Merge custom ratios into active lists
+  state.cedears = state.cedears.map(c => {
+    if (state.customRatios[c.ticker]) return { ...c, ratio: state.customRatios[c.ticker] };
     return c;
+  });
+  
+  state.obligaciones = state.obligaciones.map(o => {
+    if (state.customRatios[o.ticker]) return { ...o, ratio: state.customRatios[o.ticker] };
+    return o;
   });
 
   renderSidebarList();
@@ -758,35 +785,49 @@ async function loadActiveTickerData(ticker) {
     }
   });
 
-  const activeAsset = state.cedears.find(c => c.ticker === ticker);
-  if (!activeAsset) return;
+  const activeAsset = state.cedears.find(c => c.ticker === ticker) || state.obligaciones.find(o => o.ticker === ticker);
+  if (!activeAsset) {
+    showLoadingSpinner(false);
+    return;
+  }
   
   const ratio = activeAsset.ratio;
   const range = state.timeframe.range;
   const interval = state.timeframe.interval;
+  const isON = activeAsset.sector === 'Obligación Negociable';
   
   let usdRaw = null;
   let arsRaw = null;
   let isMock = false;
   
   try {
-    // 1. Fetch US Stock Chart
-    usdRaw = await fetchYahooFinanceData(ticker, range, interval);
-    
-    // 2. Fetch Argentine CEDEAR Chart
-    // Ticker on BYMA in Yahoo is TICKER.BA
-    // Example: AAPL.BA
-    const arTicker = `${ticker}.BA`;
-    try {
-      arsRaw = await fetchYahooFinanceData(arTicker, range, interval);
-    } catch (e) {
-      console.warn(`Failed to fetch ARS local history for ${arTicker}. Generating synthetic local chart using reference dollar.`, e);
-      // Construct a synthetic local chart using the US stock price history and current CCL rate
-      arsRaw = createSyntheticLocalChart(usdRaw, ratio, state.dolarRates.ccl);
+    if (isON) {
+      // Las ONs son activos argentinos en BYMA (TICKER.BA)
+      const arTicker = `${ticker}.BA`;
+      try {
+        arsRaw = await fetchYahooFinanceData(arTicker, range, interval);
+      } catch (err) {
+        console.warn(`Failed to fetch ON ARS history for ${arTicker}. Using simulation.`, err);
+        const mock = generateHighFidelityMockData(ticker, range, interval, ratio, state.dolarRates.mep);
+        arsRaw = mock.arsChart;
+      }
+      // Generamos el gráfico sintético en USD dividiendo por el dólar MEP/CCL
+      usdRaw = createSyntheticUsdChartFromArs(arsRaw, ratio, state.dolarRates.mep);
+    } else {
+      // 1. Fetch US Stock Chart
+      usdRaw = await fetchYahooFinanceData(ticker, range, interval);
+      
+      // 2. Fetch Argentine CEDEAR Chart
+      const arTicker = `${ticker}.BA`;
+      try {
+        arsRaw = await fetchYahooFinanceData(arTicker, range, interval);
+      } catch (e) {
+        console.warn(`Failed to fetch ARS local history for ${arTicker}. Generating synthetic local chart using reference dollar.`, e);
+        arsRaw = createSyntheticLocalChart(usdRaw, ratio, state.dolarRates.ccl);
+      }
     }
   } catch (e) {
     console.error("Critical API failure. Activating high-fidelity simulation model.", e);
-    // If the entire API chain is blocked/offline, run high-fidelity simulation
     const mock = generateHighFidelityMockData(ticker, range, interval, ratio, state.dolarRates.ccl);
     usdRaw = mock.usdChart;
     arsRaw = mock.arsChart;
@@ -858,6 +899,22 @@ function createSyntheticLocalChart(usdRaw, ratio, ccl) {
       quote.low[i] = (quote.low[i] * ccl) / ratio;
       quote.close[i] = (quote.close[i] * ccl) / ratio;
       quote.volume[i] = Math.floor(quote.volume[i] * 0.05); // local volume is much smaller
+    }
+  }
+  return synthetic;
+}
+
+function createSyntheticUsdChartFromArs(arsRaw, ratio, mep) {
+  const synthetic = JSON.parse(JSON.stringify(arsRaw)); // deep clone
+  if (!synthetic.indicators?.quote?.[0]) return synthetic;
+  
+  const quote = synthetic.indicators.quote[0];
+  for (let i = 0; i < quote.open.length; i++) {
+    if (quote.open[i] !== null) {
+      quote.open[i] = (quote.open[i] * ratio) / mep;
+      quote.high[i] = (quote.high[i] * ratio) / mep;
+      quote.low[i] = (quote.low[i] * ratio) / mep;
+      quote.close[i] = (quote.close[i] * ratio) / mep;
     }
   }
   return synthetic;
@@ -1202,74 +1259,113 @@ function runARSToUSDCalculation() {
 
 // --- SIDEBAR TICKER LIST RENDERER ---
 function renderSidebarList() {
-  const container = document.getElementById('cedear-list-container');
-  if (!container) return;
+  const containerCedears = document.getElementById('cedear-list-container');
+  const containerONs = document.getElementById('on-list-container');
   
-  container.innerHTML = '';
-  
-  // Apply Search Query & Category Filters
-  let filtered = state.cedears.filter(c => {
-    const matchesSearch = c.ticker.toLowerCase().includes(state.searchQuery.toLowerCase()) || 
-                          c.nombre.toLowerCase().includes(state.searchQuery.toLowerCase());
-    
-    let matchesCategory = true;
-    if (state.activeCategory === 'TECH') matchesCategory = c.sector === 'Tecnología' || c.sector === 'Semiconductores';
-    else if (state.activeCategory === 'FINANCE') matchesCategory = c.sector === 'Finanzas';
-    else if (state.activeCategory === 'ENERGY') matchesCategory = c.sector === 'Energía';
-    else if (state.activeCategory === 'ETF') matchesCategory = c.sector === 'ETF';
-    else if (state.activeCategory === 'FAVORITES') matchesCategory = state.favorites.includes(c.ticker);
-    
-    return matchesSearch && matchesCategory;
-  });
+  if (containerCedears) {
+    containerCedears.innerHTML = '';
+    let filteredCed = state.cedears.filter(c => {
+      const matchesSearch = c.ticker.toLowerCase().includes(state.searchQuery.toLowerCase()) || 
+                            c.nombre.toLowerCase().includes(state.searchQuery.toLowerCase());
+      const matchesFav = !state.showFavoritesOnly || state.favorites.includes(c.ticker);
+      return matchesSearch && matchesFav;
+    });
 
-  if (filtered.length === 0) {
-    container.innerHTML = `
-      <div class="flex flex-col items-center justify-center p-8 text-center text-slate-500">
-        <i data-lucide="search-code" class="w-8 h-8 mb-2"></i>
-        <p class="text-sm">No se encontraron CEDEARs</p>
-      </div>
-    `;
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-    return;
+    if (filteredCed.length === 0) {
+      containerCedears.innerHTML = `
+        <div class="flex flex-col items-center justify-center p-6 text-center text-slate-500">
+          <i data-lucide="search" class="w-6 h-6 mb-2"></i>
+          <p class="text-xs">No se encontraron CEDEARs</p>
+        </div>
+      `;
+    } else {
+      filteredCed.forEach(item => {
+        const isFav = state.favorites.includes(item.ticker);
+        const div = document.createElement('div');
+        div.className = `cedear-item glass-panel glass-panel-hover p-3.5 rounded-xl border flex items-center justify-between cursor-pointer transition-all duration-300 ${
+          state.selectedTicker === item.ticker ? 'border-indigo-500 bg-indigo-950/20 shadow-lg shadow-indigo-500/5' : 'border-slate-800/80'
+        }`;
+        div.dataset.ticker = item.ticker;
+        
+        div.innerHTML = `
+          <div class="flex-1 min-w-0 pr-3">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="font-bold text-slate-100 font-mono-financial tracking-wide">${item.ticker}</span>
+              <span class="text-[10px] font-medium px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">Ratio ${item.ratio}:1</span>
+            </div>
+            <div class="text-xs text-slate-400 truncate">${item.nombre}</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="fav-star-toggle p-1 rounded-lg hover:bg-slate-800 text-slate-500 hover:text-amber-400 transition-colors" data-ticker="${item.ticker}">
+              <i data-lucide="star" class="w-4 h-4 ${isFav ? 'fill-amber-400 text-amber-400' : ''}"></i>
+            </button>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-600"></i>
+          </div>
+        `;
+        
+        div.addEventListener('click', (e) => {
+          if (e.target.closest('.fav-star-toggle')) return;
+          loadActiveTickerData(item.ticker);
+        });
+        
+        containerCedears.appendChild(div);
+      });
+    }
   }
 
-  filtered.forEach(item => {
-    const isFav = state.favorites.includes(item.ticker);
-    const div = document.createElement('div');
-    div.className = `cedear-item glass-panel glass-panel-hover p-4 rounded-xl border flex items-center justify-between cursor-pointer transition-all duration-300 ${
-      state.selectedTicker === item.ticker ? 'border-indigo-500 bg-indigo-950/20 shadow-lg shadow-indigo-500/5' : 'border-slate-800/80'
-    }`;
-    div.dataset.ticker = item.ticker;
-    
-    div.innerHTML = `
-      <div class="flex-1 min-w-0 pr-3">
-        <div class="flex items-center gap-2 mb-1">
-          <span class="font-bold text-slate-100 font-mono-financial tracking-wide">${item.ticker}</span>
-          <span class="text-[10px] font-medium px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">Ratio ${item.ratio}:1</span>
-        </div>
-        <div class="text-xs text-slate-400 truncate">${item.nombre}</div>
-      </div>
-      <div class="flex items-center gap-2">
-        <button class="fav-star-toggle p-1 rounded-lg hover:bg-slate-800 text-slate-500 hover:text-amber-400 transition-colors" data-ticker="${item.ticker}">
-          <i data-lucide="star" class="w-4 h-4 ${isFav ? 'fill-amber-400 text-amber-400' : ''}"></i>
-        </button>
-        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-600"></i>
-      </div>
-    `;
-    
-    // Select Ticker Click
-    div.addEventListener('click', (e) => {
-      // Prevent selecting when clicking favorite button
-      if (e.target.closest('.fav-star-toggle')) return;
-      loadActiveTickerData(item.ticker);
+  if (containerONs) {
+    containerONs.innerHTML = '';
+    let filteredONs = state.obligaciones.filter(o => {
+      const matchesSearch = o.ticker.toLowerCase().includes(state.searchQuery.toLowerCase()) || 
+                            o.nombre.toLowerCase().includes(state.searchQuery.toLowerCase());
+      const matchesFav = !state.showFavoritesOnly || state.favorites.includes(o.ticker);
+      return matchesSearch && matchesFav;
     });
-    
-    container.appendChild(div);
-  });
 
-  // Re-bind favorite star click listeners in sidebar
-  const favStars = container.querySelectorAll('.fav-star-toggle');
-  favStars.forEach(btn => {
+    if (filteredONs.length === 0) {
+      containerONs.innerHTML = `
+        <div class="flex flex-col items-center justify-center p-6 text-center text-slate-500">
+          <i data-lucide="search" class="w-6 h-6 mb-2"></i>
+          <p class="text-xs">No se encontraron ONs</p>
+        </div>
+      `;
+    } else {
+      filteredONs.forEach(item => {
+        const isFav = state.favorites.includes(item.ticker);
+        const div = document.createElement('div');
+        div.className = `cedear-item glass-panel glass-panel-hover p-3.5 rounded-xl border flex items-center justify-between cursor-pointer transition-all duration-300 ${
+          state.selectedTicker === item.ticker ? 'border-indigo-500 bg-indigo-950/20 shadow-lg shadow-indigo-500/5' : 'border-slate-800/80'
+        }`;
+        div.dataset.ticker = item.ticker;
+        
+        div.innerHTML = `
+          <div class="flex-1 min-w-0 pr-3">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="font-bold text-slate-100 font-mono-financial tracking-wide">${item.ticker}</span>
+              <span class="text-[10px] font-semibold text-emerald-400 bg-emerald-950/30 px-1.5 py-0.5 rounded border border-emerald-500/20">ON</span>
+            </div>
+            <div class="text-xs text-slate-400 truncate">${item.nombre}</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="fav-star-toggle p-1 rounded-lg hover:bg-slate-800 text-slate-500 hover:text-amber-400 transition-colors" data-ticker="${item.ticker}">
+              <i data-lucide="star" class="w-4 h-4 ${isFav ? 'fill-amber-400 text-amber-400' : ''}"></i>
+            </button>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-600"></i>
+          </div>
+        `;
+        
+        div.addEventListener('click', (e) => {
+          if (e.target.closest('.fav-star-toggle')) return;
+          loadActiveTickerData(item.ticker);
+        });
+        
+        containerONs.appendChild(div);
+      });
+    }
+  }
+
+  // Bind favorite star click listeners in sidebar
+  document.querySelectorAll('.fav-star-toggle').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const ticker = btn.dataset.ticker;
@@ -1289,9 +1385,10 @@ function renderWatchlistGrid() {
   
   container.innerHTML = '';
   
-  const favCedears = state.cedears.filter(c => state.favorites.includes(c.ticker));
+  const allAssets = [...state.cedears, ...state.obligaciones];
+  const favAssets = allAssets.filter(a => state.favorites.includes(a.ticker));
   
-  if (favCedears.length === 0) {
+  if (favAssets.length === 0) {
     container.innerHTML = `
       <div class="col-span-full py-12 text-center text-slate-500 border border-dashed border-slate-800 rounded-2xl">
         <i data-lucide="star" class="w-8 h-8 mx-auto mb-2 text-slate-600"></i>
@@ -1303,16 +1400,15 @@ function renderWatchlistGrid() {
     return;
   }
   
-  favCedears.forEach(async (asset) => {
+  favAssets.forEach(async (asset) => {
+    const isON = asset.sector === 'Obligación Negociable';
     const card = document.createElement('div');
     card.className = "glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800/80 cursor-pointer transition-all duration-300 flex flex-col justify-between";
     card.dataset.ticker = asset.ticker;
     
-    // Make card clickable to load asset
     card.addEventListener('click', (e) => {
       if (e.target.closest('.remove-fav-btn')) return;
       loadActiveTickerData(asset.ticker);
-      // Scroll to top
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
@@ -1320,7 +1416,7 @@ function renderWatchlistGrid() {
       <div class="flex items-start justify-between mb-4">
         <div>
           <span class="font-bold text-lg text-slate-100 font-mono-financial tracking-wide">${asset.ticker}</span>
-          <span class="text-[10px] font-semibold text-indigo-400 bg-indigo-950/40 px-2 py-0.5 rounded-full ml-2 border border-indigo-500/20">${asset.sector}</span>
+          <span class="text-[10px] font-semibold ${isON ? 'text-emerald-400 bg-emerald-950/40 border-emerald-500/20' : 'text-indigo-400 bg-indigo-950/40 border-indigo-500/20'} px-2.5 py-0.5 rounded-full ml-2 border">${asset.sector}</span>
         </div>
         <button class="remove-fav-btn text-slate-600 hover:text-rose-400 p-1 rounded-lg hover:bg-slate-800/60 transition-colors" data-ticker="${asset.ticker}">
           <i data-lucide="x" class="w-4 h-4"></i>
@@ -1333,15 +1429,13 @@ function renderWatchlistGrid() {
           <div class="text-xs font-bold text-slate-300 font-mono-financial">${asset.ratio}:1</div>
         </div>
         <div>
-          <div class="text-[10px] text-slate-500 uppercase font-semibold">Dólar CCL</div>
+          <div class="text-[10px] text-slate-500 uppercase font-semibold">${isON ? 'Dólar MEP Est.' : 'Dólar CCL'}</div>
           <div class="text-xs font-bold text-indigo-400 font-mono-financial" id="watchlist-ccl-${asset.ticker}">Cargando...</div>
         </div>
       </div>
     `;
     
     container.appendChild(card);
-    
-    // Fetch a quick quote for this card
     fetchQuickQuote(asset.ticker, asset.ratio);
   });
 
@@ -1349,7 +1443,6 @@ function renderWatchlistGrid() {
     lucide.createIcons();
   }
   
-  // Bind remove buttons
   container.querySelectorAll('.remove-fav-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -1584,22 +1677,48 @@ function setupEventListeners() {
     });
   }
 
-  // Sidebar Category Filter Tabs
-  const filterTabs = document.querySelectorAll('.filter-tab');
-  filterTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      filterTabs.forEach(t => {
-        t.classList.remove('bg-indigo-500/15', 'text-indigo-400', 'border-indigo-500/30');
-        t.classList.add('bg-slate-900/40', 'text-slate-400', 'border-slate-800/80');
-      });
-      
-      tab.classList.remove('bg-slate-900/40', 'text-slate-400', 'border-slate-800/80');
-      tab.classList.add('bg-indigo-500/15', 'text-indigo-400', 'border-indigo-500/30');
-      
-      state.activeCategory = tab.dataset.category;
+  // Checkbox Ver Favoritos
+  const favCheckbox = document.getElementById('filter-fav-checkbox');
+  if (favCheckbox) {
+    favCheckbox.addEventListener('change', (e) => {
+      state.showFavoritesOnly = e.target.checked;
       renderSidebarList();
     });
-  });
+  }
+
+  // Accordion CEDEARs Toggle
+  const accCedearsHeader = document.getElementById('accordion-cedears-header');
+  const accCedearsCollapse = document.getElementById('cedear-list-collapse');
+  const accCedearsArrow = document.getElementById('accordion-cedears-arrow');
+  if (accCedearsHeader && accCedearsCollapse && accCedearsArrow) {
+    accCedearsHeader.addEventListener('click', () => {
+      state.cedearsOpen = !state.cedearsOpen;
+      if (state.cedearsOpen) {
+        accCedearsCollapse.style.maxHeight = '450px';
+        accCedearsArrow.classList.remove('-rotate-90');
+      } else {
+        accCedearsCollapse.style.maxHeight = '0px';
+        accCedearsArrow.classList.add('-rotate-90');
+      }
+    });
+  }
+
+  // Accordion ONs Toggle
+  const accOnsHeader = document.getElementById('accordion-ons-header');
+  const accOnsCollapse = document.getElementById('ons-list-collapse');
+  const accOnsArrow = document.getElementById('accordion-ons-arrow');
+  if (accOnsHeader && accOnsCollapse && accOnsArrow) {
+    accOnsHeader.addEventListener('click', () => {
+      state.onsOpen = !state.onsOpen;
+      if (state.onsOpen) {
+        accOnsCollapse.style.maxHeight = '450px';
+        accOnsArrow.classList.remove('-rotate-90');
+      } else {
+        accOnsCollapse.style.maxHeight = '0px';
+        accOnsArrow.classList.add('-rotate-90');
+      }
+    });
+  }
 
   // Timeframe Picker Buttons (1D, 1W, 1M, 3M, 1Y, 5Y)
   const tfButtons = document.querySelectorAll('.tf-btn');

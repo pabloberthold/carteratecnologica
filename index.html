@@ -252,8 +252,8 @@
     <!-- SIDEBAR: SELECTOR Y FILTROS (3/12 width on large screens) -->
     <aside class="lg:col-span-3 flex flex-col gap-5 min-w-0">
       
-      <!-- Search Panel -->
-      <div class="glass-panel p-4 rounded-2xl flex flex-col gap-3 shadow-xl">
+      <!-- Search Panel & Favorites Checkbox -->
+      <div class="glass-panel p-4 rounded-2xl flex flex-col gap-4 shadow-xl">
         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
           <i data-lucide="search" class="w-3.5 h-3.5"></i> Buscar Activo
         </h3>
@@ -271,30 +271,59 @@
           </button>
         </div>
 
-        <!-- Filter Categories Tabs -->
-        <div class="grid grid-cols-3 gap-1.5 pt-1 text-[10px] font-bold">
-          <button class="filter-tab py-1.5 px-2 rounded-lg border border-indigo-500/30 bg-indigo-500/15 text-indigo-400 transition-all cursor-pointer text-center" data-category="ALL">Todos</button>
-          <button class="filter-tab py-1.5 px-2 rounded-lg border border-slate-800/80 bg-slate-900/40 text-slate-400 hover:text-slate-200 transition-all cursor-pointer text-center" data-category="FAVORITES">Favoritos</button>
-          <button class="filter-tab py-1.5 px-2 rounded-lg border border-slate-800/80 bg-slate-900/40 text-slate-400 hover:text-slate-200 transition-all cursor-pointer text-center" data-category="ETF">ETFs</button>
-          <button class="filter-tab py-1.5 px-2 rounded-lg border border-slate-800/80 bg-slate-900/40 text-slate-400 hover:text-slate-200 transition-all cursor-pointer text-center" data-category="TECH">Tecnología</button>
-          <button class="filter-tab py-1.5 px-2 rounded-lg border border-slate-800/80 bg-slate-900/40 text-slate-400 hover:text-slate-200 transition-all cursor-pointer text-center" data-category="FINANCE">Finanzas</button>
-          <button class="filter-tab py-1.5 px-2 rounded-lg border border-slate-800/80 bg-slate-900/40 text-slate-400 hover:text-slate-200 transition-all cursor-pointer text-center" data-category="ENERGY">Energía</button>
+        <!-- Favorites Checkbox Filter -->
+        <div class="flex items-center justify-between pt-1 border-t border-slate-800/60">
+          <label for="filter-fav-checkbox" class="text-xs font-semibold text-slate-300 cursor-pointer select-none flex items-center gap-2">
+            <i data-lucide="star" class="w-4 h-4 text-amber-400 fill-amber-400/20"></i> Ver Favoritos
+          </label>
+          <input 
+            type="checkbox" 
+            id="filter-fav-checkbox" 
+            class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-slate-900 cursor-pointer"
+          />
         </div>
       </div>
 
-      <!-- Ticker List -->
-      <div class="glass-panel rounded-2xl flex-1 flex flex-col overflow-hidden shadow-xl min-h-[400px] lg:min-h-[550px] max-h-[750px]">
-        <div class="px-5 py-4 border-b border-slate-850 bg-slate-900/30 flex items-center justify-between">
-          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-            <i data-lucide="list" class="w-3.5 h-3.5"></i> Listado de CEDEARs
+      <!-- ACCORDION 1: Ticker List CEDEARs -->
+      <div class="glass-panel rounded-2xl flex flex-col overflow-hidden shadow-xl transition-all duration-300">
+        <div id="accordion-cedears-header" class="px-5 py-4 border-b border-slate-850 bg-slate-900/40 flex items-center justify-between cursor-pointer hover:bg-slate-900/60 transition-colors select-none">
+          <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+            <i data-lucide="layout-list" class="w-4 h-4 text-indigo-400"></i> Listado de CEDEARs
           </h3>
-          <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-bold font-mono">Cotiz. en Pesos</span>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-bold font-mono">Pesos</span>
+            <i data-lucide="chevron-down" id="accordion-cedears-arrow" class="w-4 h-4 text-slate-500 transition-transform duration-300 transform rotate-0"></i>
+          </div>
         </div>
 
-        <div id="cedear-list-container" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3 scrollbar-thin">
-          <!-- Spinner at start -->
-          <div class="flex items-center justify-center py-12">
-            <div class="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+        <div id="cedear-list-collapse" class="overflow-hidden transition-all duration-300 max-h-[450px]">
+          <div id="cedear-list-container" class="overflow-y-auto p-4 flex flex-col gap-3 max-h-[450px] scrollbar-thin">
+            <!-- Spinner at start -->
+            <div class="flex items-center justify-center py-12">
+              <div class="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACCORDION 2: Ticker List Obligaciones Negociables -->
+      <div class="glass-panel rounded-2xl flex flex-col overflow-hidden shadow-xl transition-all duration-300">
+        <div id="accordion-ons-header" class="px-5 py-4 border-b border-slate-850 bg-slate-900/40 flex items-center justify-between cursor-pointer hover:bg-slate-900/60 transition-colors select-none">
+          <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+            <i data-lucide="file-text" class="w-4 h-4 text-emerald-400"></i> Listado de ON
+          </h3>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-bold font-mono">Pesos / USD</span>
+            <i data-lucide="chevron-down" id="accordion-ons-arrow" class="w-4 h-4 text-slate-500 transition-transform duration-300 transform rotate-0"></i>
+          </div>
+        </div>
+
+        <div id="ons-list-collapse" class="overflow-hidden transition-all duration-300 max-h-[450px]">
+          <div id="on-list-container" class="overflow-y-auto p-4 flex flex-col gap-3 max-h-[450px] scrollbar-thin">
+            <!-- Spinner at start -->
+            <div class="flex items-center justify-center py-12">
+              <div class="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -678,11 +707,12 @@
   <script>
     // --- STATE MANAGEMENT ---
     const state = {
-      cedears: [],             // Loaded from JSON / Default list
-      selectedTicker: 'AAPL',  // Currently active ticker
+      cedears: [],             // Loaded from cedears.json
+      obligaciones: [],        // Loaded from obligaciones.json
+      selectedTicker: 'IBIT',  // Currently active ticker (Default: IBIT)
       timeframe: { range: '1y', interval: '1d' }, // Presets: range, interval
       chartMode: 'USD',        // 'USD' (US Stock), 'ARS' (CEDEAR local), 'CCL' (Implicit Dollar)
-      favorites: ['AAPL', 'MSFT', 'MELI', 'TSLA', 'SPY'], // Default favorites
+      favorites: ['IBIT', 'AAPL', 'MSFT', 'MELI', 'YMCHO', 'YCA6O'], // Default favorites
       dolarRates: {
         ccl: 1250,
         mep: 1220,
@@ -704,7 +734,9 @@
       candlestickSeries: null,
       volumeSeries: null,
       searchQuery: '',
-      activeCategory: 'ALL'   // 'ALL', 'TECH', 'FINANCE', 'ENERGY', 'ETF', 'FAVORITES'
+      showFavoritesOnly: false, // Checkbox Ver Favoritos
+      cedearsOpen: true,        // Accordion CEDEARs state
+      onsOpen: true             // Accordion ONs state
     };
 
     // --- DEFAULT SEED DATA (FALLBACK & INITIALIZATION) ---
@@ -736,16 +768,30 @@
       { "ticker": "ETHA", "nombre": "iShares Ethereum Trust", "ratio": 5, "sector": "ETF", "descripcion": "ETF spot administrado por BlackRock para replicar el precio de Ether." }
     ];
 
+    const DEFAULT_ONS = [
+      { "ticker": "YMCHO", "nombre": "YPF S.A. Clase I 2026 (YMCHO)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de YPF S.A. garantizada por exportaciones, vencimiento en 2026 con cupón del 9.00% anual en dólares." },
+      { "ticker": "YCA6O", "nombre": "YPF S.A. Clase XVI 2025 (YCA6O)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de YPF S.A. Ley NY, vencimiento en 2025 con cupón del 8.50% anual en dólares." },
+      { "ticker": "YMCJQ", "nombre": "YPF S.A. Clase XVII 2033 (YMCJQ)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de YPF S.A. de largo plazo, vencimiento en 2033 con cupón escalonado hasta 9.00% en dólares." },
+      { "ticker": "TLC5O", "nombre": "Telecom Argentina Clase 5 2025 (TLC5O)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de Telecom Argentina Ley NY, vencimiento en 2025 con cupón del 8.50% anual en dólares." },
+      { "ticker": "TLC1O", "nombre": "Telecom Argentina Clase 1 2026 (TLC1O)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de Telecom Argentina Ley NY, vencimiento en 2026 con cupón del 8.00% anual en dólares." },
+      { "ticker": "CS34O", "nombre": "Cresud Clase XXXIX 2026 (CS34O)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de Cresud (Agropecuaria e Inmobiliaria), vencimiento en 2026 con cupón del 8.00% en dólares." },
+      { "ticker": "PGC2O", "nombre": "Pampa Energía Clase 2 2027 (PGC2O)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de Pampa Energía (Generación y Gas), vencimiento en 2027 con cupón del 9.125% en dólares." },
+      { "ticker": "MTCGO", "nombre": "Mastellone Hnos Clase G 2026 (MTCGO)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de Mastellone Hermanos (La Serenísima), vencimiento en 2026 con cupón del 10.95% en dólares." },
+      { "ticker": "GNCXO", "nombre": "Genneia Clase XXXVIII 2027 (GNCXO)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON Verde de Genneia (Energías Renovables), vencimiento en 2027 con cupón del 8.75% en dólares." },
+      { "ticker": "IRC1O", "nombre": "IRSA Clase XIV 2028 (IRC1O)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de IRSA Inversiones y Representaciones, vencimiento en 2028 con cupón del 8.75% en dólares." },
+      { "ticker": "MRCJO", "nombre": "MSU Energy Clase XI 2025 (MRCJO)", "ratio": 1, "sector": "Obligación Negociable", "descripcion": "ON de MSU Energy (Generación Térmica), vencimiento en 2025 con cupón del 7.35% en dólares." }
+    ];
+
     // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', async () => {
       setupInitialState();
       initThemeAndDOM();
-      await loadCedearDatabase();
+      await loadDatabases();
       await fetchDolarRates();
       initTradingViewChart();
       setupEventListeners();
       
-      // Load default ticker
+      // Load default ticker (IBIT)
       await loadActiveTickerData(state.selectedTicker);
       updateTickerTape();
       renderWatchlistGrid();
@@ -774,35 +820,46 @@
       }
       
       state.cedears = [...DEFAULT_CEDEARS];
+      state.obligaciones = [...DEFAULT_ONS];
     }
 
     function initThemeAndDOM() {
-      // Setup Lucide Icons
       if (typeof lucide !== 'undefined') {
         lucide.createIcons();
       }
     }
 
-    // --- FETCH CEDEAR DATABASE (LOCAL FETCH OR FALLBACK) ---
-    async function loadCedearDatabase() {
+    // --- FETCH CEDEAR & ON DATABASES (LOCAL FETCH OR FALLBACK) ---
+    async function loadDatabases() {
       try {
-        const response = await fetch('cedears.json');
-        if (!response.ok) throw new Error("Could not fetch local JSON");
-        const data = await response.json();
-        if (Array.isArray(data) && data.length > 0) {
-          state.cedears = data;
-          console.log("Database loaded successfully from cedears.json");
+        const responseCed = await fetch('cedears.json');
+        if (responseCed.ok) {
+          const dataCed = await responseCed.json();
+          if (Array.isArray(dataCed) && dataCed.length > 0) state.cedears = dataCed;
         }
       } catch (e) {
-        console.warn("Using embedded default CEDEAR database (CORS or file system restriction)", e);
+        console.warn("Using embedded default CEDEAR database", e);
       }
       
-      // Merge custom ratios into active cedears list
-      state.cedears = state.cedears.map(c => {
-        if (state.customRatios[c.ticker]) {
-          return { ...c, ratio: state.customRatios[c.ticker] };
+      try {
+        const responseOn = await fetch('obligaciones.json');
+        if (responseOn.ok) {
+          const dataOn = await responseOn.json();
+          if (Array.isArray(dataOn) && dataOn.length > 0) state.obligaciones = dataOn;
         }
+      } catch (e) {
+        console.warn("Using embedded default ON database", e);
+      }
+      
+      // Merge custom ratios into active lists
+      state.cedears = state.cedears.map(c => {
+        if (state.customRatios[c.ticker]) return { ...c, ratio: state.customRatios[c.ticker] };
         return c;
+      });
+      
+      state.obligaciones = state.obligaciones.map(o => {
+        if (state.customRatios[o.ticker]) return { ...o, ratio: state.customRatios[o.ticker] };
+        return o;
       });
 
       renderSidebarList();
