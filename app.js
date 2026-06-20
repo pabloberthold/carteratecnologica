@@ -370,65 +370,137 @@ function setupChartTooltip() {
 }
 
 // --- YAHOO FINANCE FETCH ENGINE & CACHE ---
+// =========================================================================
+// MOTOR DE DATOS DE MERCADO — Cascada de 5 proxies CORS
+// =========================================================================
+// Orden de prioridad:
+//   1. corsproxy.io  — GitHub.io está en su whitelist gratuita
+//   2. api.allorigins.win/raw — devuelve JSON directo
+//   3. api.allorigins.win/get — envuelve en {contents:"..."}
+//   4. api.codetabs.com — 5 req/seg límite
+//   5. proxy.corsfix.com — 60 req/min gratis para dev/open-source
+//
+// Endpoint: Yahoo Finance v8 chart (sigue activo en 2026)
+//   GET https://query1.finance.yahoo.com/v8/finance/chart/{TICKER}
+//       ?range=1y&interval=1d
+//
+// Para CEDEARs en BYMA se usa el sufijo .BA (ej: AAPL.BA)
+// =========================================================================
+
 async function fetchYahooFinanceData(ticker, range, interval) {
   const cacheKey = `chart_cache_${ticker}_${range}_${interval}`;
   const cacheTimeKey = `chart_cache_time_${ticker}_${range}_${interval}`;
   const fiveMinutes = 5 * 60 * 1000;
-  
-  // Try Session Cache first
+
+  // 1. Intentar leer desde sessionStorage (caché de 5 min)
   const cachedData = sessionStorage.getItem(cacheKey);
   const cachedTime = sessionStorage.getItem(cacheTimeKey);
-  if (cachedData && cachedTime && (Date.now() - cachedTime < fiveMinutes)) {
+  if (cachedData && cachedTime && (Date.now() - Number(cachedTime) < fiveMinutes)) {
     try {
-      console.log(`Loading cached Yahoo Finance data for ${ticker}`);
+      console.log(`[Cache HIT] ${ticker} ${range}/${interval}`);
       state.connectionStatus = 'cached';
       updateConnectionIndicator();
       return JSON.parse(cachedData);
     } catch (e) {
-      console.error("Error parsing cached chart data", e);
+      console.warn('Cache corrupta, se descarta', e);
+      sessionStorage.removeItem(cacheKey);
+      sessionStorage.removeItem(cacheTimeKey);
     }
   }
 
-  // Define API Target
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?range=${range}&interval=${interval}`;
-  
-  // Attempt 1: CORSProxy.io (Fastest, direct JSON pipe)
-  try {
-    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
-    const response = await fetch(proxyUrl);
-    if (!response.ok) throw new Error("CORSProxy.io returned non-200");
-    const data = await response.json();
-    if (data?.chart?.result?.[0]) {
-      const parsed = data.chart.result[0];
-      saveToSessionCache(cacheKey, cacheTimeKey, parsed);
-      state.connectionStatus = 'connected';
-      updateConnectionIndicator();
-      return parsed;
+  // URL destino real de Yahoo Finance
+  const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?range=${range}&interval=${interval}&includePrePost=false&events=div,splits`;
+
+  // Definición de proxies en orden de prioridad
+  const proxies = [
+    {
+      name: 'corsproxy.io',
+      buildUrl: (target) => `https://corsproxy.io/?url=${encodeURIComponent(target)}`,
+      parse: async (resp) => resp.json()
+    },
+    {
+      name: 'allorigins.win/raw',
+      buildUrl: (target) => `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`,
+      parse: async (resp) => resp.json()
+    },
+    {
+      name: 'allorigins.win/get',
+      buildUrl: (target) => `https://api.allorigins.win/get?url=${encodeURIComponent(target)}`,
+      parse: async (resp) => {
+        const wrapper = await resp.json();
+        if (wrapper && wrapper.contents) {
+          return JSON.parse(wrapper.contents);
+        }
+        throw new Error('allorigins /get: campo contents vacío');
+      }
+    },
+    {
+      name: 'codetabs.com',
+      buildUrl: (target) => `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`,
+      parse: async (resp) => resp.json()
+    },
+    {
+      name: 'corsfix.com',
+      buildUrl: (target) => `https://proxy.corsfix.com/?${encodeURIComponent(target)}`,
+      parse: async (resp) => resp.json()
     }
-  } catch (e) {
-    console.warn(`Proxy 1 (corsproxy.io) failed for ${ticker}. Trying Proxy 2.`, e);
+  ];
+
+  let lastError = null;
+
+  for (const proxy of proxies) {
+    try {
+      const proxyUrl = proxy.buildUrl(yahooUrl);
+      console.log(`[Proxy ${proxy.name}] Intentando ${ticker}...`);
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+      const response = await fetch(proxyUrl, {
+        signal: controller.signal,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} ${response.statusText}`);
+      }
+
+      const data = await proxy.parse(response);
+
+      if (data?.chart?.result?.[0]) {
+        const result = data.chart.result[0];
+
+        if (result.timestamp && result.timestamp.length > 0 &&
+            result.indicators?.quote?.[0]) {
+          
+          console.log(`[Proxy ${proxy.name}] ✅ Éxito para ${ticker} — ${result.timestamp.length} velas`);
+          saveToSessionCache(cacheKey, cacheTimeKey, result);
+          state.connectionStatus = 'connected';
+          updateConnectionIndicator();
+          return result;
+        } else {
+          throw new Error('Respuesta Yahoo válida pero sin datos de velas');
+        }
+      }
+
+      if (data?.chart?.error) {
+        const yErr = data.chart.error;
+        throw new Error(`Yahoo Finance error: ${yErr.code} — ${yErr.description}`);
+      }
+
+      throw new Error('Estructura de respuesta inesperada');
+
+    } catch (e) {
+      const isAbort = e.name === 'AbortError';
+      console.warn(`[Proxy ${proxy.name}] ❌ Falló para ${ticker}: ${isAbort ? 'TIMEOUT (12s)' : e.message}`);
+      lastError = e;
+    }
   }
 
-  // Attempt 2: AllOrigins.win (Reliable backup JSON wrapper)
-  try {
-    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-    const response = await fetch(proxyUrl);
-    if (!response.ok) throw new Error("Allorigins returned non-200");
-    const wrapper = await response.json();
-    const data = JSON.parse(wrapper.contents);
-    if (data?.chart?.result?.[0]) {
-      const parsed = data.chart.result[0];
-      saveToSessionCache(cacheKey, cacheTimeKey, parsed);
-      state.connectionStatus = 'connected';
-      updateConnectionIndicator();
-      return parsed;
-    }
-  } catch (e) {
-    console.error(`Proxy 2 (allorigins.win) failed for ${ticker}.`, e);
-  }
-
-  // If both fail, throw error so caller can activate Mock Data Generator
-  throw new Error(`Failed to fetch stock data for ticker: ${ticker} from all available APIs.`);
+  throw new Error(`Todos los proxies fallaron para ${ticker}. Último error: ${lastError?.message}`);
 }
 
 function saveToSessionCache(key, timeKey, data) {
