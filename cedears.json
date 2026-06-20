@@ -1,0 +1,177 @@
+[
+  {
+    "ticker": "AAPL",
+    "nombre": "Apple Inc.",
+    "ratio": 20,
+    "sector": "Tecnología",
+    "descripcion": "Líder mundial en electrónica de consumo, software y servicios digitales."
+  },
+  {
+    "ticker": "MSFT",
+    "nombre": "Microsoft Corp.",
+    "ratio": 30,
+    "sector": "Tecnología",
+    "descripcion": "Gigante tecnológico enfocado en software, computación en la nube (Azure) e IA."
+  },
+  {
+    "ticker": "TSLA",
+    "nombre": "Tesla, Inc.",
+    "ratio": 15,
+    "sector": "Consumo Cíclico",
+    "descripcion": "Pionero en vehículos eléctricos, almacenamiento de energía y conducción autónoma."
+  },
+  {
+    "ticker": "AMZN",
+    "nombre": "Amazon.com, Inc.",
+    "ratio": 144,
+    "sector": "Consumo Cíclico",
+    "descripcion": "Líder global en comercio electrónico, logística y servicios en la nube (AWS)."
+  },
+  {
+    "ticker": "NVDA",
+    "nombre": "NVIDIA Corp.",
+    "ratio": 48,
+    "sector": "Semiconductores",
+    "descripcion": "Líder absoluto en unidades de procesamiento gráfico (GPU) e infraestructura para Inteligencia Artificial."
+  },
+  {
+    "ticker": "MELI",
+    "nombre": "MercadoLibre, Inc.",
+    "ratio": 120,
+    "sector": "Comercio Electrónico",
+    "descripcion": "La mayor plataforma de comercio electrónico y servicios fintech de América Latina."
+  },
+  {
+    "ticker": "GOOGL",
+    "nombre": "Alphabet Inc.",
+    "ratio": 58,
+    "sector": "Tecnología",
+    "descripcion": "Matriz de Google, líder en búsquedas web, publicidad digital, YouTube e Inteligencia Artificial."
+  },
+  {
+    "ticker": "META",
+    "nombre": "Meta Platforms, Inc.",
+    "ratio": 24,
+    "sector": "Tecnología",
+    "descripcion": "Propietaria de Facebook, Instagram, WhatsApp y pionera en el desarrollo del Metaverso."
+  },
+  {
+    "ticker": "KO",
+    "nombre": "The Coca-Cola Co.",
+    "ratio": 5,
+    "sector": "Consumo No Cíclico",
+    "descripcion": "La compañía de bebidas no alcohólicas más grande y reconocida del mundo."
+  },
+  {
+    "ticker": "JPM",
+    "nombre": "JPMorgan Chase & Co.",
+    "ratio": 10,
+    "sector": "Finanzas",
+    "descripcion": "El banco más grande de los Estados Unidos y uno de los líderes globales en servicios financieros."
+  },
+  {
+    "ticker": "BRK-B",
+    "nombre": "Berkshire Hathaway Inc.",
+    "ratio": 90,
+    "sector": "Finanzas",
+    "descripcion": "Conglomerado financiero dirigido por Warren Buffett, con inversiones diversificadas en múltiples industrias."
+  },
+  {
+    "ticker": "DIS",
+    "nombre": "The Walt Disney Co.",
+    "ratio": 12,
+    "sector": "Entretenimiento",
+    "descripcion": "Líder mundial en entretenimiento familiar, parques temáticos y streaming (Disney+)."
+  },
+  {
+    "ticker": "WMT",
+    "nombre": "Walmart Inc.",
+    "ratio": 9,
+    "sector": "Consumo No Cíclico",
+    "descripcion": "La cadena de hipermercados y tiendas de descuento minorista más grande del mundo."
+  },
+  {
+    "ticker": "NFLX",
+    "nombre": "Netflix, Inc.",
+    "ratio": 16,
+    "sector": "Entretenimiento",
+    "descripcion": "El servicio de streaming de entretenimiento por suscripción líder en el mundo."
+  },
+  {
+    "ticker": "AMD",
+    "nombre": "Advanced Micro Devices",
+    "ratio": 10,
+    "sector": "Semiconductores",
+    "descripcion": "Desarrollador clave de microprocesadores para computadoras, servidores y consolas de videojuegos."
+  },
+  {
+    "ticker": "GLOB",
+    "nombre": "Globant S.A.",
+    "ratio": 18,
+    "sector": "Tecnología",
+    "descripcion": "Multinacional tecnológica de origen argentino especializada en desarrollo de software y consultoría digital."
+  },
+  {
+    "ticker": "BABA",
+    "nombre": "Alibaba Group Holding",
+    "ratio": 9,
+    "sector": "Comercio Electrónico",
+    "descripcion": "El conglomerado de comercio electrónico, retail y tecnología más grande de China."
+  },
+  {
+    "ticker": "PBR",
+    "nombre": "Petróleo Brasileiro S.A.",
+    "ratio": 2,
+    "sector": "Energía",
+    "descripcion": "Empresa petrolera semi-pública brasileña, una de las mayores productoras de crudo de América Latina."
+  },
+  {
+    "ticker": "VIST",
+    "nombre": "Vista Energy, S.A.B.",
+    "ratio": 1,
+    "sector": "Energía",
+    "descripcion": "Compañía independiente de petróleo y gas con operaciones clave en Vaca Muerta, Argentina."
+  },
+  {
+    "ticker": "SPY",
+    "nombre": "SPDR S&P 500 ETF Trust",
+    "ratio": 60,
+    "sector": "ETF",
+    "descripcion": "Fondo cotizado que replica el índice S&P 500, agrupando las 500 mayores empresas de EE.UU."
+  },
+  {
+    "ticker": "QQQ",
+    "nombre": "Invesco QQQ Trust ETF",
+    "ratio": 20,
+    "sector": "ETF",
+    "descripcion": "ETF que replica el índice Nasdaq 100, compuesto principalmente por gigantes tecnológicos de EE.UU."
+  },
+  {
+    "ticker": "IWM",
+    "nombre": "iShares Russell 2000 ETF",
+    "ratio": 10,
+    "sector": "ETF",
+    "descripcion": "ETF que replica el índice Russell 2000, enfocado en empresas estadounidenses de pequeña capitalización."
+  },
+  {
+    "ticker": "DIA",
+    "nombre": "SPDR Dow Jones Industrial Average ETF",
+    "ratio": 20,
+    "sector": "ETF",
+    "descripcion": "ETF que replica el índice de referencia Dow Jones de las 30 principales empresas industriales de EE.UU."
+  },
+  {
+    "ticker": "IBIT",
+    "nombre": "iShares Bitcoin Trust",
+    "ratio": 10,
+    "sector": "ETF",
+    "descripcion": "ETF spot que replica el precio del Bitcoin (BTC) en el mercado institucional."
+  },
+  {
+    "ticker": "ETHA",
+    "nombre": "iShares Ethereum Trust",
+    "ratio": 5,
+    "sector": "ETF",
+    "descripcion": "ETF spot que replica el precio del Ether (ETH) en el mercado institucional."
+  }
+]
