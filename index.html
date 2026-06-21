@@ -311,6 +311,29 @@
             <button onclick="setTheme('light')" id="theme-btn-light" class="px-2.5 py-1 rounded-lg transition-all cursor-pointer text-slate-400 hover:text-slate-250">Claro</button>
           </div>
 
+          <!-- Cuadro de Próximo Cupón ON (Al lado del selector de temas) -->
+          <div class="relative group">
+            <div class="flex items-center gap-2 bg-slate-900/90 rounded-xl px-3 py-1.5 border border-slate-800 text-xs font-bold shadow-inner cursor-pointer hover:border-emerald-500/40 transition-all">
+              <i data-lucide="calendar" class="w-4 h-4 text-emerald-400 animate-pulse"></i>
+              <span class="text-slate-400 font-medium hidden lg:inline">Próximo Cupón ON:</span>
+              <span id="header-next-coupon" class="text-emerald-400 font-mono-financial font-bold">Cargando...</span>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-500 group-hover:text-slate-300 transition-colors"></i>
+            </div>
+            
+            <!-- Dropdown flotante con el calendario completo de pagos de ON -->
+            <div class="absolute right-0 top-full mt-2 w-85 bg-[#0a0f1d] border border-slate-800 rounded-2xl shadow-2xl p-4 hidden group-hover:flex flex-col gap-3 z-50 backdrop-blur-xl min-w-[320px]">
+              <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                <span class="text-xs font-extrabold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+                  <i data-lucide="calendar" class="w-3.5 h-3.5 text-emerald-400"></i> Calendario de Cupones ON
+                </span>
+                <span class="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">2026</span>
+              </div>
+              <div id="coupon-dropdown-list" class="flex flex-col gap-2 max-h-72 overflow-y-auto pr-1 scrollbar-thin">
+                <div class="text-xs text-slate-500 text-center py-4">Cargando fechas de pago...</div>
+              </div>
+            </div>
+          </div>
+
           <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-slate-900/80 border border-slate-800">
             <span id="status-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-500 blinking-dot"></span>
             <span id="status-indicator-text" class="text-xs font-semibold text-emerald-400">Conectando...</span>
@@ -925,11 +948,74 @@
           ratio: state.customRatios[o.ticker] || o.ratio
         }));
         console.log(`✅ obligaciones.json cargado: ${state.obligaciones.length} ONs`);
+        updateNextCouponWidget();
       } catch (e) {
         console.error('❌ Error cargando obligaciones.json:', e);
         showError('No se pudo cargar obligaciones.json. Revisá que el archivo esté en la misma carpeta que index.html');
         state.obligaciones = [];
       }
+    }
+
+    // =========================================================================
+    // CALENDARIO DE CUPONES ON (WIDGET DE CABECERA)
+    // =========================================================================
+    function updateNextCouponWidget() {
+      const headerCouponEl = document.getElementById('header-next-coupon');
+      const dropdownListEl = document.getElementById('coupon-dropdown-list');
+      if (!headerCouponEl || !dropdownListEl) return;
+
+      const onsWithCoupon = state.obligaciones
+        .filter(o => o.proximo_cupon)
+        .map(o => {
+          const dt = new Date(o.proximo_cupon + 'T00:00:00Z');
+          return { ...o, dateObj: dt, timeMs: dt.getTime() };
+        })
+        .sort((a, b) => a.timeMs - b.timeMs);
+
+      if (onsWithCoupon.length === 0) {
+        headerCouponEl.innerText = "Sin fechas";
+        dropdownListEl.innerHTML = `<div class="text-xs text-slate-500 text-center py-4">No hay cupones registrados.</div>`;
+        return;
+      }
+
+      // Encontrar el más cercano en la lista ordenada cronológicamente
+      const nextON = onsWithCoupon[0];
+      const nextDateStr = nextON.dateObj.toLocaleDateString('es-AR', { day: '2-digit', month: 'short' });
+      headerCouponEl.innerText = `${nextON.ticker} — ${nextDateStr} (${nextON.tasa_cupon || ''})`;
+
+      // Llenar el menú flotante
+      dropdownListEl.innerHTML = '';
+      onsWithCoupon.forEach(item => {
+        const dtStr = item.dateObj.toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' });
+        const logoHtml = getLogoHtml(item.ticker, 'w-7 h-7');
+        
+        const card = document.createElement('div');
+        card.className = "flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-slate-800/80 cursor-pointer transition-all duration-200 gap-3 group/item";
+        card.onclick = () => {
+          loadActiveTickerData(item.ticker);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+        
+        card.innerHTML = `
+          <div class="flex items-center gap-2.5 min-w-0">
+            ${logoHtml}
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5">
+                <span class="font-bold text-slate-100 font-mono-financial text-xs group-hover/item:text-emerald-400 transition-colors">${item.ticker}</span>
+                <span class="text-[9px] font-semibold text-emerald-400 bg-emerald-950/40 px-1.5 py-0.5 rounded border border-emerald-500/20">${item.tasa_cupon || 'ON'}</span>
+              </div>
+              <div class="text-[10px] text-slate-400 truncate max-w-[160px] leading-tight">${item.nombre}</div>
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <div class="text-xs font-bold text-slate-200 font-mono-financial">${dtStr}</div>
+            <div class="text-[9px] text-slate-500 uppercase font-semibold">Fecha Pago</div>
+          </div>
+        `;
+        dropdownListEl.appendChild(card);
+      });
+      
+      if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
     // =========================================================================
