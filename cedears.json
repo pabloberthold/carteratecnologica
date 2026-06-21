@@ -82,5 +82,19 @@
     "ratio": 10,
     "sector": "ETF",
     "descripcion": "ETF spot que replica el precio del Bitcoin (BTC) en el mercado institucional."
+  },
+  {
+    "ticker": "SPY",
+    "nombre": "SPDR S&P 500 ETF Trust",
+    "ratio": 1,
+    "sector": "ETF",
+    "descripcion": "ETF que replica el rendimiento del índice S&P 500, compuesto por las 500 empresas de mayor capitalización bursátil en EE. UU."
+  },
+  {
+    "ticker": "QQQ",
+    "nombre": "Invesco QQQ Trust",
+    "ratio": 1,
+    "sector": "ETF",
+    "descripcion": "ETF que replica el índice Nasdaq-100, enfocado principalmente en las empresas no financieras más grandes del sector tecnológico y de crecimiento."
   }
 ]
