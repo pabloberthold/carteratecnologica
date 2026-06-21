@@ -423,6 +423,19 @@
     <!-- MAIN PANEL -->
     <section class="lg:col-span-9 flex flex-col gap-6 min-w-0">
       
+      <!-- WATCHLIST (PANEL DE FAVORITOS EN LA PARTE SUPERIOR) -->
+      <div class="glass-panel p-6 rounded-2xl shadow-xl border border-slate-800/80">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
+          <div>
+            <h3 class="text-sm font-extrabold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+              <i data-lucide="star" class="w-4 h-4 text-amber-400"></i> Mi Panel de Favoritos
+            </h3>
+            <p class="text-xs text-slate-500 mt-1">Monitoreo rápido de tus activos destacados en tiempo real.</p>
+          </div>
+        </div>
+        <div id="watchlist-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+      </div>
+
       <!-- ASSET HEADER -->
       <div class="glass-panel p-5 rounded-2xl shadow-xl border border-slate-800/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div class="flex items-start gap-4">
@@ -536,78 +549,139 @@
         </div>
       </div>
 
-      <!-- CALCULATOR -->
+      <!-- CALCULATOR REDISEÑADA -->
       <div class="glass-panel p-6 rounded-2xl shadow-xl border border-slate-800/80 flex flex-col gap-6">
-        <div>
-          <h3 class="text-sm font-extrabold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-            <i data-lucide="calculator" class="w-4 h-4 text-indigo-400"></i> Calculadora de Conversión & CCL Implícito
-          </h3>
-          <p class="text-xs text-slate-500 mt-1">Cálculos teóricos en tiempo real para arbitraje cambiario.</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div class="flex flex-col gap-4 p-5 rounded-xl bg-[#070b14]/80 border border-slate-800">
-            <h4 class="text-xs font-bold text-slate-300 flex items-center gap-2 border-b border-slate-800 pb-2 mb-1">
-              <span class="w-1.5 h-3 bg-indigo-500 rounded-sm"></span> De USD a ARS
-            </h4>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Precio (USD)</label>
-                <input type="number" id="calc-usd-price" value="150" step="0.01"
-                  class="w-full bg-[#0d1222] border border-slate-800 text-sm px-3 py-2 rounded-lg text-slate-100 font-mono-financial focus:outline-none focus:border-indigo-500" />
-              </div>
-              <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Dólar CCL Ref.</label>
-                <input type="number" id="calc-ccl-ref" value="1250" step="0.5"
-                  class="w-full bg-[#0d1222] border border-slate-800 text-sm px-3 py-2 rounded-lg text-slate-100 font-mono-financial focus:outline-none focus:border-indigo-500" />
-              </div>
-            </div>
-            <div>
-              <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Ratio</label>
-              <input type="number" id="calc-ratio" value="10"
-                class="w-24 bg-[#0d1222] border border-slate-800 text-sm px-3 py-2 rounded-lg text-slate-100 font-mono-financial focus:outline-none focus:border-indigo-500 text-center" />
-            </div>
-            <div class="mt-2 pt-3 border-t border-slate-800">
-              <div class="text-[10px] font-bold text-slate-500 uppercase">Precio Teórico ARS</div>
-              <div id="calc-theoretical-ars" class="text-2xl font-black text-emerald-400 font-mono-financial my-1">$ - -</div>
-              <div id="calc-commission-ars" class="text-[10px] text-slate-500 font-medium">+1% comisiones: $ - -</div>
-            </div>
-          </div>
-          <div class="flex flex-col gap-4 p-5 rounded-xl bg-[#070b14]/80 border border-slate-800">
-            <h4 class="text-xs font-bold text-slate-300 flex items-center gap-2 border-b border-slate-800 pb-2 mb-1">
-              <span class="w-1.5 h-3 bg-emerald-500 rounded-sm"></span> De ARS a USD
-            </h4>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Precio (ARS)</label>
-                <input type="number" id="calc-ars-price" value="15000" step="1"
-                  class="w-full bg-[#0d1222] border border-slate-800 text-sm px-3 py-2 rounded-lg text-slate-100 font-mono-financial focus:outline-none focus:border-indigo-500" />
-              </div>
-              <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Ratio</label>
-                <input type="number" id="calc-ratio-ars" value="10"
-                  class="w-full bg-[#0d1222] border border-slate-800 text-sm px-3 py-2 rounded-lg text-slate-100 font-mono-financial focus:outline-none focus:border-indigo-500 text-center" />
-              </div>
-            </div>
-            <div class="mt-6 pt-3 border-t border-slate-800">
-              <div class="text-[10px] font-bold text-slate-500 uppercase">Precio Teórico USD</div>
-              <div id="calc-theoretical-usd" class="text-2xl font-black text-indigo-400 font-mono-financial my-1">u$s - -</div>
-              <div id="calc-dev-usd" class="text-[10px] text-slate-500 font-semibold">Desviación: - -%</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- WATCHLIST -->
-      <div class="glass-panel p-6 rounded-2xl shadow-xl border border-slate-800/80">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
           <div>
             <h3 class="text-sm font-extrabold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-              <i data-lucide="star" class="w-4 h-4 text-amber-400"></i> Mi Panel de Favoritos
+              <i data-lucide="calculator" class="w-4 h-4 text-indigo-400"></i> Calculadora Avanzada de Cotización & Dólar MEP
             </h3>
-            <p class="text-xs text-slate-500 mt-1">Monitoreo rápido de tus activos destacados.</p>
+            <p class="text-xs text-slate-500 mt-1">Calcula inversiones en pesos o dólares, equivalencias de nominales y conversión directa al dólar MEP.</p>
+          </div>
+          
+          <!-- Dropdown para elegir activo de los JSON -->
+          <div class="flex items-center gap-2 bg-slate-900/90 rounded-xl px-3 py-2 border border-slate-800 text-xs font-bold shadow-inner w-full sm:w-auto shrink-0">
+            <i data-lucide="bar-chart-2" class="w-4 h-4 text-indigo-400"></i>
+            <span class="text-slate-400 font-medium">Activo:</span>
+            <select id="calc-asset-select" onchange="updateCalcSelectedAsset()" class="bg-transparent text-slate-100 font-mono-financial font-bold focus:outline-none cursor-pointer pr-2">
+              <option value="IBIT">IBIT (Cargando...)</option>
+            </select>
           </div>
         </div>
-        <div id="watchlist-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+
+        <!-- Información de cotización actual del activo elegido -->
+        <div class="flex flex-wrap items-center justify-between bg-slate-900/40 p-4 rounded-xl border border-slate-800/60 gap-4 text-xs">
+          <div class="flex items-center gap-3">
+            <div id="calc-asset-logo" class="shrink-0 flex items-center justify-center">
+              <div class="w-8 h-8 rounded-lg bg-indigo-950 flex items-center justify-center font-bold text-slate-200 font-mono">IBIT</div>
+            </div>
+            <div>
+              <div class="font-bold text-slate-200 font-mono-financial text-sm" id="calc-selected-ticker">IBIT</div>
+              <div class="text-[10px] text-slate-400" id="calc-selected-name">Cargando activo...</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-6 font-mono-financial text-xs">
+            <div>
+              <span class="text-slate-500 text-[10px] block font-sans">Cotiz. Pesos (BYMA)</span>
+              <span class="font-bold text-emerald-400 text-sm" id="calc-selected-price-ars">$ - -</span>
+            </div>
+            <div>
+              <span class="text-slate-500 text-[10px] block font-sans">Cotiz. USD / Subyacente</span>
+              <span class="font-bold text-indigo-400 text-sm" id="calc-selected-price-usd">u$s - -</span>
+            </div>
+            <div>
+              <span class="text-slate-500 text-[10px] block font-sans">Ratio de Conversión</span>
+              <span class="font-bold text-slate-200 text-sm" id="calc-selected-ratio">1:1</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          <!-- COLUMNA 1: Inversión por Monto -->
+          <div class="flex flex-col gap-4 p-5 rounded-xl bg-[#070b14]/80 border border-slate-800 flex-1">
+            <h4 class="text-xs font-bold text-slate-300 flex items-center gap-2 border-b border-slate-800 pb-2 mb-1">
+              <span class="w-1.5 h-3 bg-emerald-500 rounded-sm"></span> 1. Inversión por Monto
+            </h4>
+            
+            <div>
+              <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Ingresar Capital</label>
+              <div class="relative">
+                <input type="number" id="calc-input-monto" value="100000" step="1000" oninput="runAdvancedCalculations()"
+                  class="w-full bg-[#0d1222] border border-slate-800 text-sm px-3 py-2 rounded-lg text-slate-100 font-mono-financial focus:outline-none focus:border-emerald-500" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Moneda del Capital</label>
+              <select id="calc-select-moneda" onchange="runAdvancedCalculations()" class="w-full bg-[#0d1222] border border-slate-800 text-xs px-3 py-2 rounded-lg text-slate-100 font-bold focus:outline-none cursor-pointer">
+                <option value="ARS">Pesos Argentinos (ARS)</option>
+                <option value="USD">Dólares Estadounidenses (USD)</option>
+              </select>
+            </div>
+
+            <div class="mt-auto pt-3 border-t border-slate-800">
+              <div class="text-[10px] font-bold text-slate-500 uppercase">Podes comprar (Estimado)</div>
+              <div id="calc-output-titulos" class="text-2xl font-black text-emerald-400 font-mono-financial my-1">0 Títulos</div>
+              <div id="calc-output-monto-exacto" class="text-[10px] text-slate-400 font-medium">Total exacto: $ 0</div>
+            </div>
+          </div>
+
+          <!-- COLUMNA 2: Cálculo por Cantidad -->
+          <div class="flex flex-col gap-4 p-5 rounded-xl bg-[#070b14]/80 border border-slate-800 flex-1">
+            <h4 class="text-xs font-bold text-slate-300 flex items-center gap-2 border-b border-slate-800 pb-2 mb-1">
+              <span class="w-1.5 h-3 bg-indigo-500 rounded-sm"></span> 2. Por Cantidad de Títulos
+            </h4>
+            
+            <div>
+              <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Cantidad de Títulos / CEDEARs</label>
+              <div class="relative">
+                <input type="number" id="calc-input-cantidad" value="50" step="1" oninput="runAdvancedCalculations()"
+                  class="w-full bg-[#0d1222] border border-slate-800 text-sm px-3 py-2 rounded-lg text-slate-100 font-mono-financial focus:outline-none focus:border-indigo-500" />
+              </div>
+            </div>
+
+            <div class="mt-auto pt-3 border-t border-slate-800">
+              <div class="text-[10px] font-bold text-slate-500 uppercase">Equivalencia en Pesos</div>
+              <div id="calc-output-total-ars" class="text-xl font-black text-slate-100 font-mono-financial my-1">$ - -</div>
+              <div class="text-[10px] font-bold text-slate-500 uppercase mt-2">Equivalencia en Dólares</div>
+              <div id="calc-output-total-usd" class="text-xl font-black text-indigo-400 font-mono-financial my-1">u$s - -</div>
+            </div>
+          </div>
+
+          <!-- COLUMNA 3: Conversor Dólar MEP -->
+          <div class="flex flex-col gap-4 p-5 rounded-xl bg-[#070b14]/80 border border-slate-800 flex-1">
+            <h4 class="text-xs font-bold text-slate-300 flex items-center gap-2 border-b border-slate-800 pb-2 mb-1">
+              <span class="w-1.5 h-3 bg-amber-500 rounded-sm"></span> 3. Conversor Dólar MEP
+            </h4>
+            
+            <div>
+              <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">De Pesos a Dólar MEP</label>
+              <div class="relative">
+                <input type="number" id="calc-input-pesos-mep" value="100000" step="1000" oninput="runMepCalculations('ARS')"
+                  class="w-full bg-[#0d1222] border border-slate-800 text-sm px-3 py-2 pr-12 rounded-lg text-slate-100 font-mono-financial focus:outline-none focus:border-amber-500" />
+                <span class="absolute right-3 top-2.5 text-xs text-slate-500 font-bold">ARS</span>
+              </div>
+              <div id="calc-output-usd-mep" class="text-xs font-bold text-amber-400 font-mono-financial mt-1.5">u$s - - MEP</div>
+            </div>
+
+            <div class="mt-2 pt-3 border-t border-slate-800">
+              <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">De Dólar MEP a Pesos</label>
+              <div class="relative">
+                <input type="number" id="calc-input-usd-mep" value="100" step="10" oninput="runMepCalculations('USD')"
+                  class="w-full bg-[#0d1222] border border-slate-800 text-sm px-3 py-2 pr-12 rounded-lg text-slate-100 font-mono-financial focus:outline-none focus:border-amber-500" />
+                <span class="absolute right-3 top-2.5 text-xs text-slate-500 font-bold">USD</span>
+              </div>
+              <div id="calc-output-pesos-mep" class="text-xs font-bold text-emerald-400 font-mono-financial mt-1.5">$ - - ARS</div>
+            </div>
+
+            <div class="mt-auto pt-2 text-[10px] text-slate-500 text-center flex items-center justify-center gap-1.5">
+              <i data-lucide="info" class="w-3 h-3 text-amber-400"></i>
+              <span>Tipo de cambio MEP actual: <strong class="text-slate-300" id="calc-mep-rate-label">$ - -</strong></span>
+            </div>
+          </div>
+
+        </div>
       </div>
     </section>
   </main>
@@ -886,6 +960,9 @@
         fetchDolarRates(),
         fetchLiveMarketData()
       ]);
+
+      // Poblar el selector de la calculadora con los activos cargados
+      populateCalculatorAssets();
 
       // 4. Si el usuario ya está autenticado, inicializar el gráfico de inmediato
       if (isLoggedIn) {
@@ -1697,12 +1774,10 @@
       document.getElementById('board-ccl-ref').innerText = `$ ${fmtNum(cclRef)}`;
       document.getElementById('board-ccl-ref-updated').innerText = `DolarAPI`;
       
-      // Calculadora
-      if (usd) document.getElementById('calc-usd-price').value = usd.price.toFixed(2);
-      if (ars) document.getElementById('calc-ars-price').value = ars.price.toFixed(2);
-      document.getElementById('calc-ratio').value = asset.ratio;
-      document.getElementById('calc-ratio-ars').value = asset.ratio;
-      runCalculations();
+      // Sincronizar selección de la calculadora con el activo actual
+      if (typeof selectCalcAssetByTicker === 'function') {
+        selectCalcAssetByTicker(asset.ticker);
+      }
       
       if (typeof lucide !== 'undefined') lucide.createIcons();
     }
@@ -1716,28 +1791,156 @@
     }
 
     // =========================================================================
-    // CALCULADORA
+    // CALCULADORA AVANZADA (INVERSIÓN, CANTIDADES Y CONVERSIÓN MEP)
     // =========================================================================
-    function runCalculations() {
-      // USD -> ARS
-      const usd = parseFloat(document.getElementById('calc-usd-price').value) || 0;
-      const ccl = parseFloat(document.getElementById('calc-ccl-ref').value) || 1;
-      const r1 = parseFloat(document.getElementById('calc-ratio').value) || 1;
-      const tArs = (usd * ccl) / r1;
-      document.getElementById('calc-theoretical-ars').innerText = `$ ${tArs.toLocaleString('es-AR', { maximumFractionDigits: 2 })}`;
-      document.getElementById('calc-commission-ars').innerText = `+1% comisiones: $ ${(tArs * 1.01).toLocaleString('es-AR', { maximumFractionDigits: 2 })}`;
+    function populateCalculatorAssets() {
+      const sel = document.getElementById('calc-asset-select');
+      if (!sel) return;
+      sel.innerHTML = '';
       
-      // ARS -> USD
-      const ars = parseFloat(document.getElementById('calc-ars-price').value) || 0;
-      const r2 = parseFloat(document.getElementById('calc-ratio-ars').value) || 1;
-      const tUsd = (ars * r2) / ccl;
-      document.getElementById('calc-theoretical-usd').innerText = `u$s ${tUsd.toFixed(2)}`;
-      const real = state.activeData.usdLatest?.price || tUsd;
-      const dev = ((tUsd / real) - 1) * 100;
-      const devSign = dev >= 0 ? '+' : '';
-      const devColor = Math.abs(dev) > 1.5 ? (dev > 0 ? 'text-rose-400' : 'text-emerald-400') : 'text-indigo-400';
-      document.getElementById('calc-dev-usd').innerText = `Desviación: ${devSign}${dev.toFixed(2)}%`;
-      document.getElementById('calc-dev-usd').className = `text-[10px] font-semibold mt-1 ${devColor}`;
+      const allAssets = [...state.cedears, ...state.obligaciones];
+      allAssets.forEach(a => {
+        const opt = document.createElement('option');
+        opt.value = a.ticker;
+        opt.innerText = `${a.ticker} — ${a.nombre}`;
+        sel.appendChild(opt);
+      });
+      
+      if (allAssets.length > 0) {
+        if (state.selectedTicker && allAssets.find(a => a.ticker === state.selectedTicker)) {
+          sel.value = state.selectedTicker;
+        }
+        updateCalcSelectedAsset();
+      }
+    }
+
+    function selectCalcAssetByTicker(ticker) {
+      const sel = document.getElementById('calc-asset-select');
+      if (sel && [...sel.options].some(o => o.value === ticker)) {
+        sel.value = ticker;
+        updateCalcSelectedAsset();
+      }
+    }
+
+    function updateCalcSelectedAsset() {
+      const sel = document.getElementById('calc-asset-select');
+      if (!sel) return;
+      const ticker = sel.value;
+      const asset = state.cedears.find(c => c.ticker === ticker) || state.obligaciones.find(o => o.ticker === ticker);
+      if (!asset) return;
+
+      const isON = asset.sector === 'Obligación Negociable';
+      const live = isON ? state.liveONs[ticker] : state.liveCedears[ticker];
+      
+      // Determinar precio ARS y USD
+      let priceArs = live?.c || 0;
+      let priceUsd = 0;
+      
+      if (priceArs > 0) {
+        if (isON) {
+          priceUsd = priceArs / (state.dolarRates.mep || 1220) * 100;
+        } else {
+          priceUsd = (priceArs * asset.ratio) / (state.dolarRates.ccl || 1250);
+        }
+      } else {
+        // Fallback estimado si la API live no lo trajo
+        priceArs = isON ? 145000 : 15000;
+        priceUsd = isON ? 102.50 : 15.00;
+      }
+
+      // Guardar en el DOM dataset para acceder al instante en los cálculos
+      sel.dataset.priceArs = priceArs;
+      sel.dataset.priceUsd = priceUsd;
+      sel.dataset.ratio = asset.ratio;
+      sel.dataset.isON = isON ? 'true' : 'false';
+
+      // Actualizar UI del panel superior de la calculadora
+      document.getElementById('calc-selected-ticker').innerText = asset.ticker;
+      document.getElementById('calc-selected-name').innerText = asset.nombre;
+      document.getElementById('calc-selected-price-ars').innerText = `$ ${fmtNum(priceArs)}`;
+      document.getElementById('calc-selected-price-usd').innerText = `u$s ${fmtNum(priceUsd)}`;
+      document.getElementById('calc-selected-ratio').innerText = `${asset.ratio}:1`;
+
+      const logoC = document.getElementById('calc-asset-logo');
+      if (logoC) logoC.innerHTML = getLogoHtml(asset.ticker, 'w-8 h-8');
+
+      // Actualizar tipo de cambio MEP en el conversor
+      const mepLabel = document.getElementById('calc-mep-rate-label');
+      if (mepLabel) mepLabel.innerText = `$ ${fmtNum(state.dolarRates.mep)}`;
+
+      runAdvancedCalculations();
+      runMepCalculations('ARS');
+    }
+
+    function runAdvancedCalculations() {
+      const sel = document.getElementById('calc-asset-select');
+      if (!sel) return;
+      
+      const priceArs = parseFloat(sel.dataset.priceArs) || 1;
+      const priceUsd = parseFloat(sel.dataset.priceUsd) || 1;
+      const ratio = parseFloat(sel.dataset.ratio) || 1;
+      const isON = sel.dataset.isON === 'true';
+
+      // =======================================================================
+      // COLUMNA 1: INVERSIÓN POR MONTO
+      // =======================================================================
+      const capital = parseFloat(document.getElementById('calc-input-monto').value) || 0;
+      const moneda = document.getElementById('calc-select-moneda').value;
+      
+      let cantidadComprable = 0;
+      let totalExactoArs = 0;
+
+      if (moneda === 'ARS') {
+        cantidadComprable = Math.floor(capital / priceArs);
+        totalExactoArs = cantidadComprable * priceArs;
+      } else {
+        // Moneda en USD
+        if (isON) {
+          // El precio USD de las ONs es cada 100 nominales
+          const cUsd = capital / (priceUsd / 100);
+          cantidadComprable = Math.floor(cUsd);
+          totalExactoArs = cantidadComprable * (priceArs / 100);
+        } else {
+          // CEDEARs
+          const cUsd = capital / priceUsd;
+          cantidadComprable = Math.floor(cUsd * ratio);
+          totalExactoArs = cantidadComprable * priceArs;
+        }
+      }
+
+      document.getElementById('calc-output-titulos').innerText = `${cantidadComprable.toLocaleString('es-AR')} Títulos`;
+      document.getElementById('calc-output-monto-exacto').innerText = `Total exacto: $ ${fmtNum(totalExactoArs)}`;
+
+      // =======================================================================
+      // COLUMNA 2: POR CANTIDAD DE TÍTULOS
+      // =======================================================================
+      const cantidadTitulos = parseFloat(document.getElementById('calc-input-cantidad').value) || 0;
+      
+      let totalArs = cantidadTitulos * priceArs;
+      let totalUsd = 0;
+
+      if (isON) {
+        totalUsd = (cantidadTitulos / 100) * priceUsd;
+      } else {
+        totalUsd = (cantidadTitulos / ratio) * priceUsd;
+      }
+
+      document.getElementById('calc-output-total-ars').innerText = `$ ${fmtNum(totalArs)}`;
+      document.getElementById('calc-output-total-usd').innerText = `u$s ${fmtNum(totalUsd)}`;
+    }
+
+    function runMepCalculations(from) {
+      const mepRate = state.dolarRates.mep || 1220;
+
+      if (from === 'ARS') {
+        const pesos = parseFloat(document.getElementById('calc-input-pesos-mep').value) || 0;
+        const usdMep = pesos / mepRate;
+        document.getElementById('calc-output-usd-mep').innerText = `u$s ${fmtNum(usdMep)} MEP`;
+      } else {
+        const usd = parseFloat(document.getElementById('calc-input-usd-mep').value) || 0;
+        const pesosMep = usd * mepRate;
+        document.getElementById('calc-output-pesos-mep').innerText = `$ ${fmtNum(pesosMep)} ARS`;
+      }
     }
 
     // =========================================================================
@@ -2107,16 +2310,12 @@
         }
       });
       
-      // Calculadora
-      ['calc-usd-price', 'calc-ccl-ref', 'calc-ratio', 'calc-ars-price', 'calc-ratio-ars'].forEach(id => {
-        document.getElementById(id).addEventListener('input', runCalculations);
-      });
-      
       // Refresh
       document.getElementById('refresh-connection-btn').addEventListener('click', async () => {
         sessionStorage.clear();
         await fetchDolarRates();
         await fetchLiveMarketData();
+        populateCalculatorAssets();
         renderSidebar();
         updateTickerTape();
         renderWatchlistGrid();
