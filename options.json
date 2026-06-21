@@ -1,5 +1,5 @@
 {
-  "requireAuth": false,
+  "requireAuth": true,
   "articles": [
     {
       "id": "que-es-un-cedear",
@@ -30,6 +30,46 @@
       "date": "2026-03-20",
       "tags": ["dólar", "ccl", "mep", "intermedio"],
       "readTime": "6 min"
+    },
+    {
+      "id": "que-es-una-obligacion-negociable",
+      "title": "¿Qué es una Obligación Negociable?",
+      "summary": "Una introducción clara a las ON: cómo funcionan, por qué pagan cupones en dólares y qué diferencias tienen frente a un CEDEAR o un bono soberano.",
+      "cover": "https://images.unsplash.com/photo-1554224154-26032ffc0d07?w=1200&q=80",
+      "author": "AR-CEDEAR Team",
+      "date": "2026-04-02",
+      "tags": ["ons", "renta fija", "basico"],
+      "readTime": "5 min"
+    },
+    {
+      "id": "interes-compuesto",
+      "title": "Interés Compuesto: la fuerza silenciosa que hace crecer tu dinero",
+      "summary": "Entendé por qué reinvertir ganancias es una de las herramientas más poderosas para cualquier inversor de largo plazo.",
+      "cover": "https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?w=1200&q=80",
+      "author": "AR-CEDEAR Team",
+      "date": "2026-04-04",
+      "tags": ["interés compuesto", "largo plazo", "basico"],
+      "readTime": "5 min"
+    },
+    {
+      "id": "cuando-empezar-a-invertir",
+      "title": "¿Cuándo empezar a invertir?",
+      "summary": "Una respuesta simple a una de las dudas más comunes: si conviene esperar el momento ideal o comenzar cuanto antes, aunque sea con poco dinero.",
+      "cover": "https://images.unsplash.com/photo-1518186233392-c232efbf2373?w=1200&q=80",
+      "author": "AR-CEDEAR Team",
+      "date": "2026-04-07",
+      "tags": ["principiantes", "hábitos", "inversión"],
+      "readTime": "4 min"
+    },
+    {
+      "id": "que-es-un-broker",
+      "title": "¿Qué es un broker y por qué es seguro usarlo?",
+      "summary": "Descubrí qué hace un broker, cómo te conecta con el mercado y qué controles existen para operar de forma segura en Argentina.",
+      "cover": "https://images.unsplash.com/photo-1556740749-887f6717d7e4?w=1200&q=80",
+      "author": "AR-CEDEAR Team",
+      "date": "2026-04-10",
+      "tags": ["broker", "seguridad", "principiantes"],
+      "readTime": "5 min"
     }
   ]
 }
