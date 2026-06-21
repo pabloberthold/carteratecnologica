@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Educación Financiera | AR-CEDEAR</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+    :root {
+      --bg-main: #030712;
+      --bg-header: #0a0f1d;
+      --bg-panel: rgba(15, 23, 42, 0.65);
+      --border-panel: rgba(51, 65, 85, 0.35);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --bg-input: #070a13;
+      --bg-calc-card: rgba(7, 11, 20, 0.8);
+      --border-input: #1e293b;
+    }
+
+    .theme-light {
+      --bg-main: #f1f5f9;
+      --bg-header: #ffffff;
+      --bg-panel: rgba(255, 255, 255, 0.85);
+      --border-panel: rgba(203, 213, 225, 0.7);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --bg-input: #f8fafc;
+      --bg-calc-card: rgba(241, 245, 249, 0.9);
+      --border-input: #cbd5e1;
+    }
+
+    .theme-intermediate {
+      --bg-main: #1e293b;
+      --bg-header: #0f172a;
+      --bg-panel: rgba(15, 23, 42, 0.8);
+      --border-panel: rgba(71, 85, 105, 0.5);
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --bg-input: #0f172a;
+      --bg-calc-card: rgba(15, 23, 42, 0.95);
+      --border-input: #334155;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-main) !important;
+      color: var(--text-primary) !important;
+      overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .text-slate-100, .text-slate-200, .text-slate-300 { color: var(--text-primary) !important; }
+    .text-slate-400 { color: var(--text-secondary) !important; }
+    .text-slate-500, .text-slate-600 { color: var(--text-muted) !important; }
+
+    .glass-panel {
+      background: var(--bg-panel) !important;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-panel) !important;
+    }
+
+    .bg-\[\#030712\], .bg-\[\#070b14\] { background-color: var(--bg-main) !important; }
+    .bg-\[\#0a0f1d\] { background-color: var(--bg-header) !important; }
+
+    .font-mono-financial {
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: -0.025em;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.2); }
+    ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 8px; }
+
+    .article-card {
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .article-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 35px -10px rgba(0,0,0,0.5);
+      border-color: rgba(99, 102, 241, 0.5) !important;
+    }
+
+    /* Estilos para contenido del artículo (Markdown-like) */
+    .article-content h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .article-content h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+    }
+    .article-content p {
+      margin-bottom: 1rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+    }
+    .article-content ul {
+      margin-bottom: 1rem;
+      padding-left: 1.5rem;
+      list-style: disc;
+    }
+    .article-content ul li {
+      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .article-content strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .article-content blockquote {
+      border-left: 3px solid #6366f1;
+      padding-left: 1rem;
+      margin: 1.5rem 0;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+    .article-content code {
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      padding: 0.125rem 0.375rem;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.875em;
+    }
+
+    /* Callout box */
+    .callout {
+      border-left: 4px solid #6366f1;
+      background: rgba(99, 102, 241, 0.08);
+      padding: 1rem 1.25rem;
+      border-radius: 0.5rem;
+      margin: 1.5rem 0;
+    }
+    .callout-title {
+      font-weight: 700;
+      color: #818cf8;
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tag-pill {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 0.25rem 0.625rem;
+      border-radius: 9999px;
+      background: rgba(99, 102, 241, 0.12);
+      color: #a5b4fc;
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Gráficos SVG responsivos */
+    .chart-svg-container {
+      width: 100%;
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: var(--bg-calc-card);
+      border: 1px solid var(--border-input);
+      border-radius: 0.75rem;
+    }
+    .chart-svg-container svg { width: 100%; height: auto; display: block; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="w-full bg-[#0a0f1d] border-b border-slate-800/80 px-4 py-3.5 relative z-30 shadow-md">
+    <div class="max-w-[1400px] mx-auto flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <i data-lucide="book-open" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <h1 class="font-extrabold text-base tracking-tight text-slate-100 flex items-center gap-1.5">
+            Educación <span class="text-[10px] px-1.5 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 font-mono tracking-widest uppercase">AR-CEDEAR</span>
+          </h1>
+          <p class="text-[10px] text-slate-500 font-medium">Aprende a invertir con claridad</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button onclick="toggleTheme()" title="Cambiar tema" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900/80 border border-slate-800 text-xs font-semibold text-slate-300 hover:text-white cursor-pointer">
+          <i data-lucide="palette" class="w-3.5 h-3.5"></i>
+          <span id="theme-label">Tema</span>
+        </button>
+        <a href="index.html" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-600/80 hover:bg-indigo-500 border border-indigo-500/40 text-white text-xs font-semibold transition-all">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+          <span>Volver a Terminal</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="flex-1 w-full max-w-[1400px] mx-auto p-4 lg:p-8">
+    
+    <!-- VISTA: LISTADO DE ARTÍCULOS -->
+    <section id="articles-list-view" class="flex flex-col gap-8">
+      <!-- Hero intro -->
+      <div class="glass-panel p-8 rounded-2xl shadow-xl border border-slate-800/80 relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-500"></div>
+        <div class="flex items-start gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shrink-0 shadow-lg shadow-indigo-500/20">
+            <i data-lucide="graduation-cap" class="w-7 h-7 text-white"></i>
+          </div>
+          <div class="min-w-0">
+            <h2 class="text-2xl font-extrabold text-slate-100 leading-tight mb-2">Educación Financiera</h2>
+            <p class="text-sm text-slate-400 leading-relaxed max-w-3xl">
+              Bienvenido a la biblioteca de AR-CEDEAR. Acá vas a encontrar guías claras, concisas y visuales sobre los conceptos más importantes del mercado argentino: CEDEARs, Obligaciones Negociables, dólar CCL/MEP y mucho más.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid de artículos -->
+      <div id="articles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Spinner inicial -->
+        <div class="col-span-full flex items-center justify-center py-16">
+          <div class="w-10 h-10 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA: ARTÍCULO INDIVIDUAL -->
+    <section id="article-detail-view" class="hidden flex flex-col gap-6">
+      <!-- Botón volver -->
+      <button onclick="showArticlesList()" class="flex items-center gap-2 self-start px-3 py-1.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-300 hover:text-white cursor-pointer">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        <span>Volver a todas las notas</span>
+      </button>
+
+      <!-- Cabecera del artículo -->
+      <header id="article-header" class="glass-panel rounded-2xl overflow-hidden border border-slate-800/80 shadow-xl"></header>
+
+      <!-- Cuerpo del artículo -->
+      <article id="article-body" class="glass-panel p-6 md:p-10 rounded-2xl border border-slate-800/80 shadow-xl"></article>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="w-full bg-[#050810] border-t border-slate-900/60 py-6 px-4 text-center">
+    <div class="max-w-[1400px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <span>Terminal AR-CEDEAR · Sección Educación</span>
+      <span class="text-slate-600">100% Client-Side · GitHub Pages</span>
+    </div>
+  </footer>
+
+  <script>
+    // =========================================================================
+    // CONTENIDO DE LOS ARTÍCULOS
+    // =========================================================================
+    const ARTICLE_CONTENT = {
+      'que-es-un-cedear': {
+        intro: `
+          <p>Si alguna vez escuchaste la palabra <strong>"CEDEAR"</strong> pero no sabés exactamente qué significa, esta guía es para vos. En pocos minutos vas a entender qué son, cómo funcionan y por qué se convirtieron en una de las herramientas favoritas de los inversores argentinos para cuidar sus pesos.</p>
+
+          <div class="callout">
+            <div class="callout-title"><i data-lucide="info" class="w-4 h-4"></i> En una frase</div>
+            <p class="mb-0">Un CEDEAR es un certificado que comprás en pesos en Argentina y que <strong>representa una acción de una empresa extranjera</strong> (como Apple, Tesla o Coca-Cola).</p>
+          </div>
+
+          <h2><i data-lucide="help-circle" class="w-5 h-5 text-indigo-400"></i> ¿Qué significa CEDEAR?</h2>
+          <p>La sigla viene de <strong>Certificado de Depósito Argentino</strong>. Básicamente es un papel (hoy digital) emitido por un banco local —normalmente Banco Comafi o Caja de Valores— que "envuelve" una acción extranjera y te permite comprarla operando directamente en el mercado argentino, en pesos.</p>
+
+          <h2><i data-lucide="zap" class="w-5 h-5 text-amber-400"></i> ¿Cómo funciona?</h2>
+          <p>Miralo con este esquema simplificado:</p>
+
+          <div class="chart-svg-container">
+            <svg viewBox="0 0 600 260" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+              <!-- Fondo -->
+              <rect width="600" height="260" fill="transparent"/>
+
+              <!-- Caja izquierda: Wall Street -->
+              <rect x="20" y="50" width="180" height="160" rx="12" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+              <text x="110" y="80" text-anchor="middle" fill="#f1f5f9" font-size="14" font-weight="700">🇺🇸 Wall Street</text>
+              <text x="110" y="105" text-anchor="middle" fill="#94a3b8" font-size="11">1 acción Apple</text>
+              <text x="110" y="125" text-anchor="middle" fill="#10b981" font-size="13" font-weight="700">u$s 240</text>
+              <text x="110" y="155" text-anchor="middle" fill="#64748b" font-size="10">Cotización real</text>
+              <text x="110" y="170" text-anchor="middle" fill="#64748b" font-size="10">en NYSE</text>
+
+              <!-- Flecha central -->
+              <path d="M 200 130 L 280 130" stroke="#6366f1" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+              <defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#6366f1"/>
+                </marker>
+              </defs>
+
+              <!-- Caja central: Emisor -->
+              <rect x="280" y="50" width="180" height="160" rx="12" fill="#312e81" stroke="#6366f1" stroke-width="2"/>
+              <text x="370" y="80" text-anchor="middle" fill="#f1f5f9" font-size="14" font-weight="700">🏦 Emisor Local</text>
+              <text x="370" y="105" text-anchor="middle" fill="#94a3b8" font-size="11">(Comafi / Caja Valores)</text>
+              <text x="370" y="135" text-anchor="middle" fill="#a5b4fc" font-size="12" font-weight="600">"Envuelve"</text>
+              <text x="370" y="155" text-anchor="middle" fill="#a5b4fc" font-size="12" font-weight="600">la acción</text>
+              <text x="370" y="180" text-anchor="middle" fill="#64748b" font-size="10">Ratio: 1 acción =</text>
+              <text x="370" y="195" text-anchor="middle" fill="#818cf8" font-size="13" font-weight="700">20 CEDEARs</text>
+
+              <!-- Flecha derecha -->
+              <path d="M 460 130 L 540 130" stroke="#10b981" stroke-width="3" fill="none" marker-end="url(#arrow2)"/>
+              <defs>
+                <marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+                </marker>
+              </defs>
+
+              <!-- Caja derecha: Argentina -->
+              <rect x="540" y="50" width="180" height="160" rx="12" fill="#065f46" stroke="#10b981" stroke-width="2" transform="translate(-100, 0)"/>
+              <text x="540" y="80" text-anchor="middle" fill="#f1f5f9" font-size="14" font-weight="700">🇦🇷 Argentina</text>
+              <text x="540" y="105" text-anchor="middle" fill="#94a3b8" font-size="11">Vos comprás</text>
+              <text x="540" y="125" text-anchor="middle" fill="#10b981" font-size="13" font-weight="700">CEDEAR AAPL</text>
+              <text x="540" y="155" text-anchor="middle" fill="#64748b" font-size="10">En pesos, en BYMA,</text>
+              <text x="540" y="170" text-anchor="middle" fill="#64748b" font-size="10">con tu broker local</text>
+
+              <!-- Leyenda inferior -->
+              <text x="300" y="245" text-anchor="middle" fill="#64748b" font-size="10">Cada CEDEAR representa una fracción de la acción extranjera.</text>
+            </svg>
+          </div>
+
+          <h2><i data-lucide="star" class="w-5 h-5 text-amber-400"></i> Ventajas principales</h2>
+          <ul>
+            <li><strong>Dolarización natural:</strong> Como el CEDEAR está atado al precio de la acción en dólares, si el dólar sube en Argentina, el CEDEAR también sube.</li>
+            <li><strong>Acceso a grandes empresas:</strong> Podés ser "dueño" de Apple, Tesla, Microsoft, Amazon, Coca-Cola, etc., operando 100% en pesos.</li>
+            <li><strong>Sin trámites en el exterior:</strong> No necesitás abrir cuenta en un broker internacional.</li>
+            <li><strong>Liquidez:</strong> Se compran y venden igual que una acción argentina en BYMA.</li>
+            <li><strong>Cobro de dividendos:</strong> Si la empresa reparte, vos también cobrás (en pesos al tipo de cambio del día).</li>
+          </ul>
+
+          <h2><i data-lucide="calculator" class="w-5 h-5 text-emerald-400"></i> ¿Qué es el ratio de conversión?</h2>
+          <p>Cada CEDEAR representa una <strong>fracción</strong> de la acción original. Esa fracción se llama <strong>ratio</strong>. Por ejemplo:</p>
+          <ul>
+            <li><strong>AAPL</strong> tiene ratio <code>20:1</code> → necesitás 20 CEDEARs para equivaler a 1 acción real de Apple.</li>
+            <li><strong>TSLA</strong> tiene ratio <code>15:1</code> → 15 CEDEARs = 1 acción real de Tesla.</li>
+            <li><strong>KO</strong> tiene ratio <code>5:1</code> → 5 CEDEARs = 1 acción real de Coca-Cola.</li>
+          </ul>
+          <p>Esto permite que puedas invertir montos pequeños sin tener que comprar una acción entera (que puede costar miles de dólares).</p>
+
+          <h2><i data-lucide="trending-up" class="w-5 h-5 text-emerald-400"></i> Evolución histórica de un CEDEAR vs dólar</h2>
+          <p>Este gráfico muestra por qué los CEDEARs son una excelente cobertura: siguen al dólar y además se mueven con el precio de la acción.</p>
+
+          <div class="chart-svg-container">
+            <svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+              <!-- Ejes -->
+              <line x1="60" y1="30" x2="60" y2="230" stroke="#475569" stroke-width="1"/>
+              <line x1="60" y1="230" x2="580" y2="230" stroke="#475569" stroke-width="1"/>
+
+              <!-- Grid horizontal -->
+              <line x1="60" y1="80" x2="580" y2="80" stroke="#1e293b" stroke-width="1" stroke-dasharray="3,3"/>
+              <line x1="60" y1="130" x2="580" y2="130" stroke="#1e293b" stroke-width="1" stroke-dasharray="3,3"/>
+              <line x1="60" y1="180" x2="580" y2="180" stroke="#1e293b" stroke-width="1" stroke-dasharray="3,3"/>
+
+              <!-- Etiquetas eje Y -->
+              <text x="50" y="35" text-anchor="end" fill="#64748b" font-size="10">Alto</text>
+              <text x="50" y="135" text-anchor="end" fill="#64748b" font-size="10">Medio</text>
+              <text x="50" y="235" text-anchor="end" fill="#64748b" font-size="10">Bajo</text>
+
+              <!-- Etiquetas eje X -->
+              <text x="80" y="250" fill="#64748b" font-size="10">2020</text>
+              <text x="200" y="250" fill="#64748b" font-size="10">2021</text>
+              <text x="320" y="250" fill="#64748b" font-size="10">2022</text>
+              <text x="440" y="250" fill="#64748b" font-size="10">2023</text>
+              <text x="560" y="250" fill="#64748b" font-size="10">2024</text>
+
+              <!-- Línea del dólar CCL (azul claro, más estable) -->
+              <polyline 
+                points="80,180 140,165 200,160 260,155 320,150 380,135 440,120 500,100 560,85"
+                stroke="#38bdf8" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+
+              <!-- Línea del CEDEAR (verde, más volátil pero tendencia similar) -->
+              <polyline 
+                points="80,190 140,155 200,140 260,125 320,145 380,100 440,85 500,65 560,50"
+                stroke="#10b981" stroke-width="3" fill="none" stroke-linejoin="round"/>
+
+              <!-- Área bajo CEDEAR -->
+              <polyline 
+                points="80,190 140,155 200,140 260,125 320,145 380,100 440,85 500,65 560,50 560,230 80,230"
+                fill="#10b981" fill-opacity="0.12" stroke="none"/>
+
+              <!-- Leyenda -->
+              <g transform="translate(380, 30)">
+                <rect x="0" y="0" width="180" height="50" fill="#0f172a" stroke="#1e293b" rx="8"/>
+                <line x1="10" y1="18" x2="30" y2="18" stroke="#38bdf8" stroke-width="2.5"/>
+                <text x="35" y="22" fill="#cbd5e1" font-size="10">Dólar CCL</text>
+                <line x1="10" y1="38" x2="30" y2="38" stroke="#10b981" stroke-width="3"/>
+                <text x="35" y="42" fill="#cbd5e1" font-size="10">CEDEAR (ej. AAPL)</text>
+              </g>
+
+              <!-- Título -->
+              <text x="300" y="18" text-anchor="middle" fill="#f1f5f9" font-size="12" font-weight="700">CEDEAR vs Dólar CCL (Evolución 2020-2024)</text>
+            </svg>
+          </div>
+
+          <blockquote>
+            La línea verde (CEDEAR) tiende a seguir a la línea azul (dólar CCL), pero además incorpora el movimiento de la acción en Wall Street. Por eso <strong>históricamente rinde más que solo comprar dólares</strong>.
+          </blockquote>
+
+          <h2><i data-lucide="alert-triangle" class="w-5 h-5 text-amber-400"></i> Riesgos a tener en cuenta</h2>
+          <ul>
+            <li><strong>Riesgo de mercado:</strong> Si la acción en EE.UU. cae, el CEDEAR también.</li>
+            <li><strong>Riesgo cambiario:</strong> Si el dólar baja (poco común en Argentina), el CEDEAR baja.</li>
+            <li><strong>Riesgo de liquidez:</strong> Algunas ONs o CEDEARs muy pequeños pueden ser difíciles de vender rápido.</li>
+          </ul>
+
+          <div class="callout" style="border-left-color: #10b981; background: rgba(16, 185, 129, 0.08);">
+            <div class="callout-title" style="color: #10b981;"><i data-lucide="check-circle" class="w-4 h-4"></i> Resumen</div>
+            <p class="mb-0">Un CEDEAR es la forma más simple, barata y segura de dolarizarte e invertir en empresas globales desde Argentina, operando en pesos y con tu broker local. ¡Ya sabés lo básico para empezar!</p>
+          </div>
+        `
+      },
+      'ratios-de-conversion': {
+        intro: `
+          <p>El <strong>ratio de conversión</strong> es la relación entre un CEDEAR y la acción extranjera que representa. Es el número que te dice "cuántos CEDEARs equivalen a una acción real".</p>
+          <h2>Ejemplos reales</h2>
+          <ul>
+            <li><strong>AAPL 20:1</strong> → 20 CEDEARs = 1 acción de Apple</li>
+            <li><strong>TSLA 15:1</strong> → 15 CEDEARs = 1 acción de Tesla</li>
+            <li><strong>AMZN 144:1</strong> → 144 CEDEARs = 1 acción de Amazon</li>
+            <li><strong>KO 5:1</strong> → 5 CEDEARs = 1 acción de Coca-Cola</li>
+          </ul>
+          <h2>¿Por qué importan los ratios?</h2>
+          <p>Un ratio alto significa que cada CEDEAR vale <strong>poco</strong> en pesos, ideal para montos chicos. Un ratio bajo significa que cada CEDEAR ya cuesta <strong>mucho</strong> en pesos.</p>
+          <p>Los ratios <strong>pueden cambiar</strong>: cuando una acción sube mucho de precio, el emisor puede hacer un "split" del CEDEAR para que siga siendo accesible.</p>
+          <p>En AR-CEDEAR Terminal podés <strong>modificar el ratio manualmente</strong> desde la pantalla principal si detectás que cambió el oficial.</p>
+        `
+      },
+      'dolares-ccl-mep': {
+        intro: `
+          <p>En Argentina hay varios "dólares". Los dos más importantes para quien invierte en CEDEARs son el <strong>CCL</strong> y el <strong>MEP</strong>.</p>
+          <h2>Dólar MEP (Bolsa)</h2>
+          <p>Se compra vendiendo un bono en pesos y comprándolo en dólares <strong>el mismo día</strong>. Es la forma más rápida y simple.</p>
+          <h2>Dólar CCL (Contado con Liquidación)</h2>
+          <p>Similar al MEP, pero la operación tarda <strong>2 días hábiles</strong> en liquidarse. Se usa cuando querés mover los dólares al exterior.</p>
+          <h2>¿Cuál importa para CEDEARs?</h2>
+          <p>El <strong>CCL</strong>, porque los CEDEARs representan acciones en EE.UU. Por eso AR-CEDEAR muestra el CCL implícito de cada activo: si el CCL implícito está lejos del CCL oficial, hay oportunidad de arbitraje.</p>
+        `
+      }
+    };
+
+    // =========================================================================
+    // LÓGICA DE LA APP
+    // =========================================================================
+    let currentTheme = localStorage.getItem('terminal_theme') || 'dark';
+
+    async function loadOptions() {
+      try {
+        const r = await fetch(`options.json?v=${Date.now()}`, { cache: 'no-store' });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const opts = await r.json();
+        return opts;
+      } catch (e) {
+        console.error('Error cargando options.json:', e);
+        return { articles: [] };
+      }
+    }
+
+    function applyTheme(theme) {
+      currentTheme = theme;
+      localStorage.setItem('terminal_theme', theme);
+      document.body.classList.remove('theme-light', 'theme-intermediate');
+      if (theme === 'light') document.body.classList.add('theme-light');
+      else if (theme === 'intermediate') document.body.classList.add('theme-intermediate');
+      const label = { dark: 'Oscuro', intermediate: 'Gris', light: 'Claro' }[theme];
+      document.getElementById('theme-label').innerText = label;
+    }
+
+    function toggleTheme() {
+      const order = ['dark', 'intermediate', 'light'];
+      const next = order[(order.indexOf(currentTheme) + 1) % order.length];
+      applyTheme(next);
+    }
+
+    async function init() {
+      applyTheme(currentTheme);
+      const opts = await loadOptions();
+      renderArticlesGrid(opts.articles || []);
+
+      // Routing por hash
+      window.addEventListener('hashchange', () => route(opts.articles || []));
+      route(opts.articles || []);
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function route(articles) {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && hash.startsWith('articulo-')) {
+        const id = hash.replace('articulo-', '');
+        const article = articles.find(a => a.id === id);
+        if (article) {
+          showArticle(article);
+          return;
+        }
+      }
+      showArticlesList();
+    }
+
+    function renderArticlesGrid(articles) {
+      const grid = document.getElementById('articles-grid');
+      if (!articles.length) {
+        grid.innerHTML = `<div class="col-span-full text-center text-slate-500 py-16">No hay artículos disponibles.</div>`;
+        return;
+      }
+      grid.innerHTML = '';
+      articles.forEach(art => {
+        const card = document.createElement('a');
+        card.href = `#articulo-${art.id}`;
+        card.className = "article-card glass-panel rounded-2xl overflow-hidden border border-slate-800/80 shadow-xl flex flex-col cursor-pointer no-underline";
+        card.innerHTML = `
+          <div class="relative h-40 overflow-hidden bg-slate-800">
+            <img src="${art.cover}" alt="${art.title}" class="w-full h-full object-cover" onerror="this.style.display='none'" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+            <div class="absolute top-3 left-3 flex gap-1.5 flex-wrap">
+              ${(art.tags || []).slice(0, 3).map(t => `<span class="tag-pill">${t}</span>`).join('')}
+            </div>
+          </div>
+          <div class="p-5 flex flex-col gap-3 flex-1">
+            <h3 class="text-lg font-extrabold text-slate-100 leading-tight">${art.title}</h3>
+            <p class="text-xs text-slate-400 leading-relaxed flex-1">${art.summary}</p>
+            <div class="flex items-center justify-between pt-3 border-t border-slate-800/60 text-[10px] text-slate-500">
+              <span class="flex items-center gap-1.5"><i data-lucide="user" class="w-3 h-3"></i> ${art.author || 'AR-CEDEAR'}</span>
+              <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-3 h-3"></i> ${art.readTime || '5 min'}</span>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function showArticlesList() {
+      document.getElementById('articles-list-view').classList.remove('hidden');
+      document.getElementById('article-detail-view').classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showArticle(article) {
+      document.getElementById('articles-list-view').classList.add('hidden');
+      document.getElementById('article-detail-view').classList.remove('hidden');
+
+      const header = document.getElementById('article-header');
+      header.innerHTML = `
+        <div class="relative h-56 md:h-80 overflow-hidden">
+          <img src="${article.cover}" alt="${article.title}" class="w-full h-full object-cover" onerror="this.style.display='none'" />
+          <div class="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/60 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-6 md:p-10">
+            <div class="flex gap-1.5 flex-wrap mb-3">
+              ${(article.tags || []).map(t => `<span class="tag-pill">${t}</span>`).join('')}
+            </div>
+            <h1 class="text-2xl md:text-4xl font-extrabold text-white leading-tight mb-3 drop-shadow-lg">${article.title}</h1>
+            <div class="flex flex-wrap items-center gap-4 text-xs text-slate-300">
+              <span class="flex items-center gap-1.5"><i data-lucide="user" class="w-3.5 h-3.5"></i> ${article.author || 'AR-CEDEAR Team'}</span>
+              <span class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${new Date(article.date).toLocaleDateString('es-AR', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+              <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i> ${article.readTime || '5 min'} de lectura</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const body = document.getElementById('article-body');
+      const content = ARTICLE_CONTENT[article.id];
+      if (content) {
+        body.innerHTML = `<div class="article-content max-w-3xl mx-auto">${content.intro}</div>`;
+      } else {
+        body.innerHTML = `<div class="article-content max-w-3xl mx-auto"><p>Contenido próximamente...</p></div>`;
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

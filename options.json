@@ -1,0 +1,35 @@
+{
+  "requireAuth": false,
+  "articles": [
+    {
+      "id": "que-es-un-cedear",
+      "title": "¿Qué es un CEDEAR? Guía práctica para principiantes",
+      "summary": "Una explicación sencilla sobre qué son los Certificados de Depósito en Argentina, cómo funcionan y por qué son una de las mejores formas de dolarizarse e invertir en las empresas más grandes del mundo.",
+      "cover": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&q=80",
+      "author": "AR-CEDEAR Team",
+      "date": "2026-03-01",
+      "tags": ["cedears", "basico", "inversión", "principiantes"],
+      "readTime": "5 min"
+    },
+    {
+      "id": "ratios-de-conversion",
+      "title": "Entendiendo los Ratios de Conversión",
+      "summary": "Aprende qué significa el ratio 10:1 de un CEDEAR y cómo calcular cuántos certificados necesitás para equivaler a una acción en EE.UU.",
+      "cover": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200&q=80",
+      "author": "AR-CEDEAR Team",
+      "date": "2026-03-15",
+      "tags": ["cedears", "ratio", "intermedio"],
+      "readTime": "4 min"
+    },
+    {
+      "id": "dolares-ccl-mep",
+      "title": "Dólar CCL vs MEP: cuál es la diferencia",
+      "summary": "Guía clara sobre los distintos tipos de dólar financiero en Argentina y por qué el CCL es el más relevante para quienes invierten en CEDEARs.",
+      "cover": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=1200&q=80",
+      "author": "AR-CEDEAR Team",
+      "date": "2026-03-20",
+      "tags": ["dólar", "ccl", "mep", "intermedio"],
+      "readTime": "6 min"
+    }
+  ]
+}

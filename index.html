@@ -311,28 +311,34 @@
             <button onclick="setTheme('light')" id="theme-btn-light" class="px-2.5 py-1 rounded-lg transition-all cursor-pointer text-slate-400 hover:text-slate-250">Claro</button>
           </div>
 
-          <!-- Cuadro de Próximo Cupón ON (Al lado del selector de temas) -->
-          <div class="relative group">
-            <div class="flex items-center gap-2 bg-slate-900/90 rounded-xl px-3 py-1.5 border border-slate-800 text-xs font-bold shadow-inner cursor-pointer hover:border-emerald-500/40 transition-all">
+          <!-- Cuadro de Próximo Cupón ON (click-to-toggle, no hover) -->
+          <div class="relative" id="coupon-widget-container">
+            <button id="coupon-widget-btn" class="flex items-center gap-2 bg-slate-900/90 rounded-xl px-3 py-1.5 border border-slate-800 text-xs font-bold shadow-inner cursor-pointer hover:border-emerald-500/40 transition-all">
               <i data-lucide="calendar" class="w-4 h-4 text-emerald-400 animate-pulse"></i>
               <span class="text-slate-400 font-medium hidden lg:inline">Próximo Cupón ON:</span>
               <span id="header-next-coupon" class="text-emerald-400 font-mono-financial font-bold">Cargando...</span>
-              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-500 group-hover:text-slate-300 transition-colors"></i>
-            </div>
+              <i data-lucide="chevron-down" id="coupon-widget-arrow" class="w-3.5 h-3.5 text-slate-500 transition-transform duration-200"></i>
+            </button>
             
             <!-- Dropdown flotante con el calendario completo de pagos de ON -->
-            <div class="absolute right-0 top-full mt-2 w-85 bg-[#0a0f1d] border border-slate-800 rounded-2xl shadow-2xl p-4 hidden group-hover:flex flex-col gap-3 z-50 backdrop-blur-xl min-w-[320px]">
+            <div id="coupon-dropdown-panel" class="absolute right-0 top-full mt-2 bg-[#0a0f1d] border border-slate-800 rounded-2xl shadow-2xl p-4 hidden flex-col gap-3 z-50 backdrop-blur-xl min-w-[340px]">
               <div class="flex items-center justify-between border-b border-slate-800 pb-2">
                 <span class="text-xs font-extrabold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
                   <i data-lucide="calendar" class="w-3.5 h-3.5 text-emerald-400"></i> Calendario de Cupones ON
                 </span>
-                <span class="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">2026</span>
+                <span id="coupon-year-badge" class="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">2026</span>
               </div>
               <div id="coupon-dropdown-list" class="flex flex-col gap-2 max-h-72 overflow-y-auto pr-1 scrollbar-thin">
                 <div class="text-xs text-slate-500 text-center py-4">Cargando fechas de pago...</div>
               </div>
             </div>
           </div>
+
+          <!-- Botón de Educación -->
+          <a href="educacion.html" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/40 border border-indigo-500/40 text-indigo-300 hover:text-indigo-200 text-xs font-bold shadow-inner cursor-pointer transition-all">
+            <i data-lucide="graduation-cap" class="w-3.5 h-3.5"></i>
+            <span class="hidden lg:inline">Educación</span>
+          </a>
 
           <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-slate-900/80 border border-slate-800">
             <span id="status-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-500 blinking-dot"></span>
@@ -647,7 +653,8 @@
       volumeSeries: null,
       searchQuery: '',
       showFavoritesOnly: false,
-      connectionStatus: 'connecting'
+      connectionStatus: 'connecting',
+      options: { requireAuth: true, articles: [] }
     };
 
     // =========================================================================
@@ -846,7 +853,12 @@
       loadCustomRatiosFromStorage();
       if (typeof lucide !== 'undefined') lucide.createIcons();
 
-      const isLoggedIn = localStorage.getItem('auth_inversor') === 'true';
+      // 0. Cargar SIEMPRE options.json primero (define si pedir auth o no)
+      await loadOptionsJSON();
+
+      const requireAuth = state.options.requireAuth === true;
+      const isLoggedIn = !requireAuth || localStorage.getItem('auth_inversor') === 'true';
+
       if (isLoggedIn) {
         document.getElementById('login-overlay').classList.add('hidden');
         document.getElementById('main-app-container').classList.remove('hidden');
@@ -914,8 +926,25 @@
     }
 
     // =========================================================================
-    // CARGA DE JSON (cedears.json + obligaciones.json)
+    // CARGA DE JSON (cedears.json + obligaciones.json + options.json)
     // =========================================================================
+    async function loadOptionsJSON() {
+      const url = `options.json?v=${Date.now()}`;
+      try {
+        const r = await fetch(url, { cache: 'no-store' });
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const data = await r.json();
+        state.options = {
+          requireAuth: typeof data.requireAuth === 'boolean' ? data.requireAuth : true,
+          articles: Array.isArray(data.articles) ? data.articles : []
+        };
+        console.log(`✅ options.json cargado: requireAuth=${state.options.requireAuth}, ${state.options.articles.length} artículos`);
+      } catch (e) {
+        console.warn('⚠️ No se pudo cargar options.json, usando valores por defecto.', e);
+        state.options = { requireAuth: true, articles: [] };
+      }
+    }
+
     async function loadCedearsJSON() {
       // Añadimos cache-busting query para forzar relectura ante cambios
       const url = `cedears.json?v=${Date.now()}`;
@@ -965,6 +994,10 @@
       if (!headerCouponEl || !dropdownListEl) return;
 
       headerCouponEl.innerText = "Sincronizando web...";
+
+      // Actualizar badge del año dinámicamente
+      const yearBadge = document.getElementById('coupon-year-badge');
+      if (yearBadge) yearBadge.innerText = new Date().getFullYear();
 
       // 1. Catálogo maestro de frecuencias de pago de ONs en Argentina
       // Permite calcular matemáticamente el próximo cupón real en función de la fecha actual
@@ -1972,6 +2005,43 @@
     // EVENT LISTENERS
     // =========================================================================
     function setupEventListeners() {
+      // =========================================================================
+      // DESPLEGABLE DEL PRÓXIMO CUPÓN ON — click-to-toggle + click-fuera cierra
+      // =========================================================================
+      const couponBtn = document.getElementById('coupon-widget-btn');
+      const couponPanel = document.getElementById('coupon-dropdown-panel');
+      const couponArrow = document.getElementById('coupon-widget-arrow');
+
+      if (couponBtn && couponPanel) {
+        couponBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isHidden = couponPanel.classList.contains('hidden');
+          if (isHidden) {
+            couponPanel.classList.remove('hidden');
+            couponPanel.classList.add('flex');
+            if (couponArrow) couponArrow.style.transform = 'rotate(180deg)';
+          } else {
+            couponPanel.classList.add('hidden');
+            couponPanel.classList.remove('flex');
+            if (couponArrow) couponArrow.style.transform = 'rotate(0deg)';
+          }
+        });
+
+        // Click dentro del panel NO debe cerrarlo (para permitir scroll y clickear items)
+        couponPanel.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+
+        // Click fuera del widget → cierra el dropdown
+        document.addEventListener('click', (e) => {
+          if (!couponPanel.classList.contains('hidden')) {
+            couponPanel.classList.add('hidden');
+            couponPanel.classList.remove('flex');
+            if (couponArrow) couponArrow.style.transform = 'rotate(0deg)';
+          }
+        });
+      }
+
       // Buscar
       document.getElementById('sidebar-search').addEventListener('input', (e) => {
         state.searchQuery = e.target.value;
