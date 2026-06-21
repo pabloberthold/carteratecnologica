@@ -130,52 +130,114 @@
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
 
-  <!-- TOP TICKER TAPE BAR -->
-  <div class="w-full bg-[#070b14] border-b border-slate-900 overflow-hidden relative z-40 select-none">
-    <div class="max-w-[1600px] mx-auto px-4 flex items-center justify-between">
-      <div id="ticker-tape-wrapper" class="flex-1 overflow-hidden pr-8">
-        <div class="marquee-content gap-8 py-2.5 flex items-center">
-          <span class="text-xs text-slate-500 font-medium">Iniciando cotizaciones de referencia...</span>
+  <!-- ========================================================================= -->
+  <!-- PANTALLA DE AUTENTICACIÓN (LOGIN OVERLAY) -->
+  <!-- ========================================================================= -->
+  <div id="login-overlay" class="fixed inset-0 bg-[#030712] z-50 flex items-center justify-center p-4">
+    <div class="glass-panel p-8 rounded-2xl shadow-2xl border border-slate-800 w-full max-w-md flex flex-col gap-6 relative overflow-hidden">
+      <!-- Decór superior -->
+      <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-500"></div>
+      
+      <div class="flex flex-col items-center text-center gap-2 pt-2">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/30 mb-1">
+          <i data-lucide="shield-check" class="w-8 h-8 text-white"></i>
         </div>
+        <h2 class="text-xl font-extrabold text-slate-100 tracking-tight">Acceso a AR-CEDEAR Terminal</h2>
+        <p class="text-xs text-slate-400">Ingresá tus credenciales de inversor para acceder a las cotizaciones y flujos en tiempo real.</p>
       </div>
-      <div class="flex items-center gap-4 border-l border-slate-800 pl-4 py-2 text-xs font-mono-financial shrink-0">
-        <div class="hidden md:flex items-center gap-4">
-          <div class="flex items-center gap-1.5"><span class="text-slate-500">CCL:</span><span class="text-indigo-400 font-bold" id="ccl-rate-top">$ - -</span></div>
-          <div class="flex items-center gap-1.5"><span class="text-slate-500">MEP:</span><span class="text-emerald-400 font-bold" id="mep-rate-top">$ - -</span></div>
-          <div class="flex items-center gap-1.5"><span class="text-slate-500">BLUE:</span><span class="text-amber-400 font-bold" id="blue-rate-top">$ - -</span></div>
-          <div class="flex items-center gap-1.5"><span class="text-slate-500">OFICIAL:</span><span class="text-slate-300 font-bold" id="oficial-rate-top">$ - -</span></div>
+
+      <!-- Banner de Error de Login -->
+      <div id="login-error-banner" class="hidden bg-rose-950/80 border border-rose-800 text-rose-300 p-3 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-inner">
+        <i data-lucide="alert-circle" class="w-4 h-4 text-rose-400 shrink-0"></i>
+        <span id="login-error-text">Usuario o contraseña incorrectos.</span>
+      </div>
+
+      <form id="login-form" class="flex flex-col gap-4" onsubmit="event.preventDefault(); handleLogin();">
+        <div>
+          <label for="login-username" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Usuario</label>
+          <div class="relative">
+            <input type="text" id="login-username" placeholder="ej. inversor" required autofocus
+              class="w-full bg-[#070a13] border border-slate-800 text-sm px-4 py-3 pl-10 rounded-xl text-slate-100 placeholder-slate-600 custom-focus transition-all" />
+            <i data-lucide="user" class="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5"></i>
+          </div>
         </div>
-        <div class="text-[10px] text-slate-500 font-sans" id="dolar-update-time">Cargando...</div>
+
+        <div>
+          <label for="login-password" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Contraseña</label>
+          <div class="relative">
+            <input type="password" id="login-password" placeholder="••••••••" required
+              class="w-full bg-[#070a13] border border-slate-800 text-sm px-4 py-3 pl-10 rounded-xl text-slate-100 placeholder-slate-600 custom-focus transition-all" />
+            <i data-lucide="lock" class="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5"></i>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold shadow-lg shadow-indigo-600/30 transition-all cursor-pointer mt-2 flex items-center justify-center gap-2">
+          <span>Ingresar a la Terminal</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </form>
+
+      <div class="text-center border-t border-slate-800/80 pt-4 mt-2">
+        <p class="text-[10px] text-slate-500">Tecnología 100% Client-Side · Encriptación de acceso local</p>
       </div>
     </div>
   </div>
 
-  <!-- HEADER -->
-  <header class="w-full bg-[#0a0f1d] border-b border-slate-800/80 px-4 py-3.5 relative z-30 shadow-md">
-    <div class="max-w-[1600px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-          <i data-lucide="trending-up" class="w-5 h-5 text-white"></i>
+  <!-- ========================================================================= -->
+  <!-- CONTENEDOR PRINCIPAL DE LA APP (OCULTO HASTA AUTENTICAR) -->
+  <!-- ========================================================================= -->
+  <div id="main-app-container" class="w-full flex-1 flex flex-col hidden">
+
+    <!-- TOP TICKER TAPE BAR -->
+    <div class="w-full bg-[#070b14] border-b border-slate-900 overflow-hidden relative z-40 select-none">
+      <div class="max-w-[1600px] mx-auto px-4 flex items-center justify-between">
+        <div id="ticker-tape-wrapper" class="flex-1 overflow-hidden pr-8">
+          <div class="marquee-content gap-8 py-2.5 flex items-center">
+            <span class="text-xs text-slate-500 font-medium">Iniciando cotizaciones de referencia...</span>
+          </div>
         </div>
-        <div>
-          <h1 class="font-extrabold text-base tracking-tight text-slate-100 flex items-center gap-1.5">
-            AR-CEDEAR <span class="text-[10px] px-1.5 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 font-mono tracking-widest uppercase">Terminal</span>
-          </h1>
-          <p class="text-[10px] text-slate-500 font-medium">CEDEARs & Obligaciones Negociables — Datos reales BYMA</p>
+        <div class="flex items-center gap-4 border-l border-slate-800 pl-4 py-2 text-xs font-mono-financial shrink-0">
+          <div class="hidden md:flex items-center gap-4">
+            <div class="flex items-center gap-1.5"><span class="text-slate-500">CCL:</span><span class="text-indigo-400 font-bold" id="ccl-rate-top">$ - -</span></div>
+            <div class="flex items-center gap-1.5"><span class="text-slate-500">MEP:</span><span class="text-emerald-400 font-bold" id="mep-rate-top">$ - -</span></div>
+            <div class="flex items-center gap-1.5"><span class="text-slate-500">BLUE:</span><span class="text-amber-400 font-bold" id="blue-rate-top">$ - -</span></div>
+            <div class="flex items-center gap-1.5"><span class="text-slate-500">OFICIAL:</span><span class="text-slate-300 font-bold" id="oficial-rate-top">$ - -</span></div>
+          </div>
+          <div class="text-[10px] text-slate-500 font-sans" id="dolar-update-time">Cargando...</div>
         </div>
-      </div>
-      <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
-        <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-slate-900/80 border border-slate-800">
-          <span id="status-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-500 blinking-dot"></span>
-          <span id="status-indicator-text" class="text-xs font-semibold text-emerald-400">Conectando...</span>
-        </div>
-        <button id="refresh-connection-btn" class="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-slate-300 hover:text-white transition-all cursor-pointer">
-          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-          <span>Sincronizar</span>
-        </button>
       </div>
     </div>
-  </header>
+
+    <!-- HEADER -->
+    <header class="w-full bg-[#0a0f1d] border-b border-slate-800/80 px-4 py-3.5 relative z-30 shadow-md">
+      <div class="max-w-[1600px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+            <i data-lucide="trending-up" class="w-5 h-5 text-white"></i>
+          </div>
+          <div>
+            <h1 class="font-extrabold text-base tracking-tight text-slate-100 flex items-center gap-1.5">
+              AR-CEDEAR <span class="text-[10px] px-1.5 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 font-mono tracking-widest uppercase">Terminal</span>
+            </h1>
+            <p class="text-[10px] text-slate-500 font-medium">CEDEARs & Obligaciones Negociables — Datos reales BYMA</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end flex-wrap">
+          <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-slate-900/80 border border-slate-800">
+            <span id="status-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-500 blinking-dot"></span>
+            <span id="status-indicator-text" class="text-xs font-semibold text-emerald-400">Conectando...</span>
+          </div>
+          <button id="refresh-connection-btn" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-slate-300 hover:text-white transition-all cursor-pointer">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <span>Sincronizar</span>
+          </button>
+          <button onclick="handleLogout()" title="Cerrar Sesión" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-900/20 hover:bg-rose-900/40 border border-rose-800/40 text-rose-300 hover:text-rose-200 text-xs font-semibold transition-all cursor-pointer">
+            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            <span>Salir</span>
+          </button>
+        </div>
+      </div>
+    </header>
 
   <!-- MAIN -->
   <main class="flex-1 max-w-[1600px] w-full mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -437,6 +499,8 @@
     </div>
   </footer>
 
+  </div> <!-- Cierre de #main-app-container -->
+
   <script>
     // =========================================================================
     // ESTADO GLOBAL
@@ -473,12 +537,71 @@
     };
 
     // =========================================================================
+    // AUTENTICACIÓN (ENCRIPTACIÓN CLIENT-SIDE)
+    // =========================================================================
+    function encryptPassword(str) {
+      let res = '';
+      for (let i = 0; i < str.length; i++) {
+        // Encriptación sencilla por desplazamiento + conversión a Hexadecimal
+        // "pablito" se convierte en la cadena "7f70717b78837e"
+        res += (str.charCodeAt(i) + 15).toString(16);
+      }
+      return res;
+    }
+
+    function handleLogin() {
+      const user = document.getElementById('login-username').value.trim().toLowerCase();
+      const pass = document.getElementById('login-password').value;
+      const errBanner = document.getElementById('login-error-banner');
+      
+      const encrypted = encryptPassword(pass);
+      
+      // Verificación contra credenciales encriptadas en el código
+      if (user === 'inversor' && encrypted === '7f70717b78837e') {
+        localStorage.setItem('auth_inversor', 'true');
+        document.getElementById('login-overlay').classList.add('hidden');
+        document.getElementById('main-app-container').classList.remove('hidden');
+        errBanner.classList.add('hidden');
+        
+        // Inicializar gráfico y cargar activo por defecto ahora que el contenedor tiene dimensiones reales
+        if (!state.chartInstance) {
+          initTradingViewChart();
+          loadActiveTickerData(state.selectedTicker);
+        } else {
+          state.chartInstance.timeScale().fitContent();
+        }
+      } else {
+        errBanner.classList.remove('hidden');
+        document.getElementById('login-password').value = '';
+        document.getElementById('login-password').focus();
+      }
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('auth_inversor');
+      document.getElementById('main-app-container').classList.add('hidden');
+      document.getElementById('login-overlay').classList.remove('hidden');
+      document.getElementById('login-password').value = '';
+      document.getElementById('login-username').value = '';
+      document.getElementById('login-username').focus();
+    }
+
+    // =========================================================================
     // INIT
     // =========================================================================
     document.addEventListener('DOMContentLoaded', async () => {
       loadFavoritesFromStorage();
       loadCustomRatiosFromStorage();
       if (typeof lucide !== 'undefined') lucide.createIcons();
+
+      const isLoggedIn = localStorage.getItem('auth_inversor') === 'true';
+      if (isLoggedIn) {
+        document.getElementById('login-overlay').classList.add('hidden');
+        document.getElementById('main-app-container').classList.remove('hidden');
+      } else {
+        document.getElementById('login-overlay').classList.remove('hidden');
+        document.getElementById('main-app-container').classList.add('hidden');
+      }
 
       // 1. Cargar JSONs locales (cedears + obligaciones)
       await Promise.all([
@@ -489,7 +612,6 @@
       // 2. Renderizar sidebar inmediatamente con datos del JSON
       renderSidebar();
       setupEventListeners();
-      initTradingViewChart();
 
       // 3. En paralelo: cargar dólar + cotizaciones live de BYMA
       await Promise.all([
@@ -497,8 +619,11 @@
         fetchLiveMarketData()
       ]);
 
-      // 4. Cargar gráfico del ticker por defecto (IBIT)
-      await loadActiveTickerData(state.selectedTicker);
+      // 4. Si el usuario ya está autenticado, inicializar el gráfico de inmediato
+      if (isLoggedIn) {
+        initTradingViewChart();
+        await loadActiveTickerData(state.selectedTicker);
+      }
       
       // 5. Pintar barra superior + watchlist
       updateTickerTape();
