@@ -12,27 +12,107 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
+    /* =========================================================================
+       SISTEMA DE TEMAS MÚLTIPLES MEDIANTE VARIABLES CSS
+       ========================================================================= */
+    :root {
+      --bg-main: #030712;
+      --bg-header: #0a0f1d;
+      --bg-panel: rgba(15, 23, 42, 0.65);
+      --border-panel: rgba(51, 65, 85, 0.35);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --bg-input: #070a13;
+      --bg-calc-card: rgba(7, 11, 20, 0.8);
+      --border-input: #1e293b;
+      --shadow-intensity: rgba(0, 0, 0, 0.5);
+    }
+
+    .theme-light {
+      --bg-main: #f1f5f9;
+      --bg-header: #ffffff;
+      --bg-panel: rgba(255, 255, 255, 0.85);
+      --border-panel: rgba(203, 213, 225, 0.7);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --bg-input: #f8fafc;
+      --bg-calc-card: rgba(241, 245, 249, 0.9);
+      --border-input: #cbd5e1;
+      --shadow-intensity: rgba(148, 163, 184, 0.15);
+    }
+
+    .theme-intermediate {
+      --bg-main: #1e293b;
+      --bg-header: #0f172a;
+      --bg-panel: rgba(15, 23, 42, 0.8);
+      --border-panel: rgba(71, 85, 105, 0.5);
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --bg-input: #0f172a;
+      --bg-calc-card: rgba(15, 23, 42, 0.95);
+      --border-input: #334155;
+      --shadow-intensity: rgba(0, 0, 0, 0.4);
+    }
+
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #030712;
+      background-color: var(--bg-main) !important;
+      color: var(--text-primary) !important;
       overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Mapeo inteligente de clases Tailwind de textos para evitar modificar código HTML */
+    .text-slate-100, .text-slate-200, .text-slate-300, .text-slate-50, .text-white {
+      color: var(--text-primary) !important;
+    }
+    .text-slate-400, .text-slate-405, .text-slate-440 {
+      color: var(--text-secondary) !important;
+    }
+    .text-slate-500, .text-slate-600 {
+      color: var(--text-muted) !important;
+    }
+
+    /* Contenedores */
+    .bg-\[\#030712\], .bg-\[\#070b14\], .bg-\[\#050810\] {
+      background-color: var(--bg-main) !important;
+    }
+    .bg-\[\#0a0f1d\], .bg-slate-900\/30, .bg-slate-900\/40 {
+      background-color: var(--bg-header) !important;
+    }
+    .bg-\[\#070b14\]\/80 {
+      background-color: var(--bg-calc-card) !important;
+    }
+
+    /* Entradas */
+    input, select, textarea, .bg-\[\#0d1222\], .bg-\[\#070a13\] {
+      background-color: var(--bg-input) !important;
+      border-color: var(--border-input) !important;
+      color: var(--text-primary) !important;
+    }
+    
+    .border-slate-800, .border-slate-850, .border-slate-700, .border-slate-900 {
+      border-color: var(--border-input) !important;
     }
 
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.3); border-radius: 8px; }
-    ::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0.4); border-radius: 8px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.6); }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.2); border-radius: 8px; }
+    ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 8px; }
+    ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
 
     .glass-panel {
-      background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(51, 65, 85, 0.35);
+      background: var(--bg-panel) !important;
+      border: 1px solid var(--border-panel) !important;
+      box-shadow: 0 10px 15px -3px var(--shadow-intensity);
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     }
     
     .glass-panel-hover:hover {
-      border-color: rgba(99, 102, 241, 0.4);
-      background: rgba(15, 23, 42, 0.8);
+      border-color: #6366f1 !important;
+      background: var(--bg-panel);
     }
 
     @keyframes pulse-dot {
@@ -223,6 +303,14 @@
           </div>
         </div>
         <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end flex-wrap">
+          
+          <!-- Selector de Temas Visual -->
+          <div class="flex items-center gap-1.5 bg-slate-900/90 rounded-xl p-1 border border-slate-800 text-[11px] font-bold shadow-inner">
+            <button onclick="setTheme('dark')" id="theme-btn-dark" class="px-2.5 py-1 rounded-lg transition-all cursor-pointer bg-indigo-600 text-white">Oscuro</button>
+            <button onclick="setTheme('intermediate')" id="theme-btn-intermediate" class="px-2.5 py-1 rounded-lg transition-all cursor-pointer text-slate-400 hover:text-slate-250">Gris</button>
+            <button onclick="setTheme('light')" id="theme-btn-light" class="px-2.5 py-1 rounded-lg transition-all cursor-pointer text-slate-400 hover:text-slate-250">Claro</button>
+          </div>
+
           <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-slate-900/80 border border-slate-800">
             <span id="status-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-500 blinking-dot"></span>
             <span id="status-indicator-text" class="text-xs font-semibold text-emerald-400">Conectando...</span>
@@ -309,8 +397,11 @@
       <!-- ASSET HEADER -->
       <div class="glass-panel p-5 rounded-2xl shadow-xl border border-slate-800/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div class="flex items-start gap-4">
-          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600/90 to-indigo-800 flex items-center justify-center text-white text-xs font-extrabold tracking-wider shadow-inner shrink-0">
-            <span id="details-ticker">- -</span>
+          <!-- Contenedor del Logo de la Empresa -->
+          <div id="details-logo-container" class="shrink-0 flex items-center justify-center">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600/90 to-indigo-800 flex items-center justify-center text-white text-xs font-extrabold tracking-wider shadow-inner shrink-0">
+              <span id="details-ticker">- -</span>
+            </div>
           </div>
           <div class="min-w-0">
             <div class="flex flex-wrap items-center gap-2 mb-1">
@@ -537,13 +628,150 @@
     };
 
     // =========================================================================
+    // SISTEMA DE TEMAS DINÁMICO
+    // =========================================================================
+    function setTheme(themeName) {
+      state.theme = themeName;
+      localStorage.setItem('terminal_theme', themeName);
+      
+      // Actualizar clases de body
+      const body = document.body;
+      body.classList.remove('theme-light', 'theme-intermediate');
+      if (themeName === 'light') {
+        body.classList.add('theme-light');
+      } else if (themeName === 'intermediate') {
+        body.classList.add('theme-intermediate');
+      }
+      
+      // Actualizar botones de tema activos en la cabecera
+      ['dark', 'intermediate', 'light'].forEach(t => {
+        const btn = document.getElementById(`theme-btn-${t}`);
+        if (!btn) return;
+        if (t === themeName) {
+          btn.className = "px-2.5 py-1 rounded-lg transition-all cursor-pointer bg-indigo-600 text-white";
+        } else {
+          btn.className = "px-2.5 py-1 rounded-lg transition-all cursor-pointer text-slate-400 hover:text-slate-200";
+        }
+      });
+      
+      // Actualizar opciones de color del gráfico TradingView
+      updateChartTheme();
+    }
+
+    function updateChartTheme() {
+      if (!state.chartInstance) return;
+      
+      let bg, grid, text;
+      const themeName = state.theme || 'dark';
+      
+      if (themeName === 'light') {
+        bg = '#ffffff';
+        grid = 'rgba(226, 232, 240, 0.8)';
+        text = '#475569';
+      } else if (themeName === 'intermediate') {
+        bg = '#0f172a';
+        grid = 'rgba(51, 65, 85, 0.4)';
+        text = '#cbd5e1';
+      } else {
+        bg = '#0b0f19';
+        grid = 'rgba(30, 41, 59, 0.4)';
+        text = '#94a3b8';
+      }
+      
+      state.chartInstance.applyOptions({
+        layout: {
+          background: { type: 'solid', color: bg },
+          textColor: text
+        },
+        grid: {
+          vertLines: { color: grid },
+          horzLines: { color: grid }
+        }
+      });
+    }
+
+    // =========================================================================
+    // MOTOR DE LOGOS AUTOMÁTICO (PARQET CDN CON FALLBACK EN ALTA DEFINICIÓN)
+    // =========================================================================
+    function getLogoHtml(ticker, size = 'w-9 h-9') {
+      // Normalizar ticker y remover el sufijo local de BYMA si lo tiene
+      const cleanTicker = ticker.replace('.BA', '').toUpperCase();
+      
+      // Diccionario de traducción inteligente para Obligaciones Negociables en Argentina
+      // data912 mapea ONs locales, pero Parqet tiene las marcas por sus tickers de Wall Street
+      const onIssuerMapping = {
+        // YPF
+        'YMCHO': 'YPF', 'YMCJO': 'YPF', 'YMCSO': 'YPF', 'YCA6O': 'YPF',
+        // Aeropuertos Argentina 2000 (Corporación América Airports en NYSE: CAAP)
+        'AERBO': 'CAAP', 'AER9O': 'CAAP',
+        // Telecom Argentina (NYSE: TEO)
+        'TLC1O': 'TEO', 'TLC5O': 'TEO',
+        // Cresud (Agropecuaria en NASDAQ: CRESY)
+        'CS34O': 'CRESY', 'CS38O': 'CRESY',
+        // Pampa Energía (NYSE: PAM)
+        'PGC2O': 'PAM',
+        // Mastellone Hnos (La Serenísima - LSE o consumo alimenticio, fallback a Danone o branding similar)
+        'MTCGO': 'DANONE', 
+        // Genneia (Energías Renovables - fallback a clean energy ticker o default)
+        'GNCXO': 'NEE',
+        // IRSA (Inmobiliaria en NYSE: IRS)
+        'IRC1O': 'IRS',
+        // Banco Hipotecario (BYMA: BHIP)
+        'BYCHO': 'BHIP',
+        // Banco BACS / CIA Inversora
+        'BACGO': 'BMA', 'CIC7O': 'BP', 'CIC8O': 'BP'
+      };
+      
+      let targetTicker = cleanTicker;
+      if (onIssuerMapping[cleanTicker]) {
+        targetTicker = onIssuerMapping[cleanTicker];
+      }
+      
+      // IBIT y ETHA son ETFs de BlackRock (usamos Ishares o Blackrock logo)
+      if (cleanTicker === 'IBIT' || cleanTicker === 'ETHA') {
+        targetTicker = 'BLK';
+      }
+
+      // Generar un color pastel consistente basado en el hash del nombre del ticker
+      let hash = 0;
+      for (let i = 0; i < cleanTicker.length; i++) {
+        hash = cleanTicker.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      const hue = Math.abs(hash) % 360;
+      const colorBg = `hsl(${hue}, 60%, 30%)`;
+      
+      // Fallback hermoso con las primeras 2 letras del ticker en un círculo con color dinámico
+      const initials = cleanTicker.substring(0, 2);
+      const fallbackSvg = `
+        <div class="${size} rounded-xl flex items-center justify-center font-bold text-xs text-slate-100 tracking-wider shrink-0" style="background-color: ${colorBg}">
+          ${initials}
+        </div>
+      `.trim();
+
+      // Parqet Logo CDN. format=png para transparencia y estabilidad.
+      const imageUrl = `https://assets.parqet.com/logos/symbol/${targetTicker}?format=png`;
+      
+      return `
+        <div class="relative shrink-0 flex items-center justify-center">
+          <img 
+            src="${imageUrl}" 
+            alt="Logo ${cleanTicker}" 
+            class="${size} rounded-xl object-contain bg-slate-900/40 p-1 border border-slate-800/30 transition-all duration-300"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          />
+          <div class="hidden-fallback flex" style="display: none;">
+            ${fallbackSvg}
+          </div>
+        </div>
+      `;
+    }
+
+    // =========================================================================
     // AUTENTICACIÓN (ENCRIPTACIÓN CLIENT-SIDE)
     // =========================================================================
     function encryptPassword(str) {
       let res = '';
       for (let i = 0; i < str.length; i++) {
-        // Encriptación sencilla por desplazamiento + conversión a Hexadecimal
-        // "pablito" se convierte en la cadena "7f70717b78837e"
         res += (str.charCodeAt(i) + 15).toString(16);
       }
       return res;
@@ -556,16 +784,17 @@
       
       const encrypted = encryptPassword(pass);
       
-      // Verificación contra credenciales encriptadas en el código
       if (user === 'inversor' && encrypted === '7f70717b78837e') {
         localStorage.setItem('auth_inversor', 'true');
         document.getElementById('login-overlay').classList.add('hidden');
         document.getElementById('main-app-container').classList.remove('hidden');
         errBanner.classList.add('hidden');
         
-        // Inicializar gráfico y cargar activo por defecto ahora que el contenedor tiene dimensiones reales
         if (!state.chartInstance) {
           initTradingViewChart();
+          // Aplicar tema guardado después de inicializar
+          const savedTheme = localStorage.getItem('terminal_theme') || 'dark';
+          setTheme(savedTheme);
           loadActiveTickerData(state.selectedTicker);
         } else {
           state.chartInstance.timeScale().fitContent();
@@ -603,6 +832,10 @@
         document.getElementById('main-app-container').classList.add('hidden');
       }
 
+      // Inicializar el tema guardado en localStorage o por defecto 'dark'
+      const savedTheme = localStorage.getItem('terminal_theme') || 'dark';
+      setTheme(savedTheme);
+
       // 1. Cargar JSONs locales (cedears + obligaciones)
       await Promise.all([
         loadCedearsJSON(),
@@ -622,6 +855,8 @@
       // 4. Si el usuario ya está autenticado, inicializar el gráfico de inmediato
       if (isLoggedIn) {
         initTradingViewChart();
+        // Volver a forzar el tema en el gráfico tras su inicialización
+        updateChartTheme();
         await loadActiveTickerData(state.selectedTicker);
       }
       
@@ -1175,7 +1410,12 @@
       const gapPercent = ((cclImp / cclRef) - 1) * 100;
       const isON = asset.sector === 'Obligación Negociable';
       
-      document.getElementById('details-ticker').innerText = asset.ticker;
+      // Carga dinámica del Logo Grande del Activo seleccionado
+      const logoContainer = document.getElementById('details-logo-container');
+      if (logoContainer) {
+        logoContainer.innerHTML = getLogoHtml(asset.ticker, 'w-14 h-14');
+      }
+      
       document.getElementById('details-name').innerText = asset.nombre;
       document.getElementById('details-sector').innerText = asset.sector;
       document.getElementById('details-desc').innerText = asset.descripcion;
@@ -1309,21 +1549,25 @@
         const pctColor = pct >= 0 ? 'text-emerald-400' : 'text-rose-400';
         const pctText = (pct !== undefined && pct !== null) ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%` : '—';
         
+        // Obtener el HTML del Logo
+        const logoHtml = getLogoHtml(item.ticker, 'w-8 h-8');
+        
         const div = document.createElement('div');
-        div.className = `asset-item glass-panel glass-panel-hover p-3 rounded-lg border flex items-center justify-between cursor-pointer transition-all duration-300 ${
+        div.className = `asset-item glass-panel glass-panel-hover p-2.5 rounded-lg border flex items-center justify-between cursor-pointer transition-all duration-300 gap-3 ${
           state.selectedTicker === item.ticker ? 'border-indigo-500 bg-indigo-950/20' : 'border-slate-800/80'
         }`;
         div.dataset.ticker = item.ticker;
         div.innerHTML = `
-          <div class="flex-1 min-w-0 pr-3">
-            <div class="flex items-center gap-2 mb-0.5">
-              <span class="font-bold text-slate-100 font-mono-financial text-sm">${item.ticker}</span>
-              <span class="text-[9px] font-medium px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">R${item.ratio}</span>
-              <span class="text-[10px] font-bold font-mono-financial ${pctColor} ml-auto">${pctText}</span>
+          ${logoHtml}
+          <div class="flex-1 min-w-0 pr-1">
+            <div class="flex items-center gap-1.5 mb-0.5">
+              <span class="font-bold text-slate-100 font-mono-financial text-xs leading-none">${item.ticker}</span>
+              <span class="text-[8px] font-medium px-1 py-0.5 rounded bg-slate-800 text-slate-400 leading-none">R${item.ratio}</span>
+              <span class="text-[9px] font-bold font-mono-financial ${pctColor} ml-auto leading-none">${pctText}</span>
             </div>
-            <div class="text-[11px] text-slate-400 truncate">${item.nombre}</div>
+            <div class="text-[10px] text-slate-400 truncate leading-tight">${item.nombre}</div>
           </div>
-          <button class="fav-toggle p-1 rounded hover:bg-slate-800 transition-colors" data-ticker="${item.ticker}">
+          <button class="fav-toggle p-1 rounded hover:bg-slate-800 transition-colors shrink-0" data-ticker="${item.ticker}">
             <i data-lucide="star" class="w-3.5 h-3.5 ${isFav ? 'fill-amber-400 text-amber-400' : 'text-slate-500'}"></i>
           </button>
         `;
@@ -1369,24 +1613,28 @@
         const pct = live?.pct_change;
         const pctColor = pct >= 0 ? 'text-emerald-400' : 'text-rose-400';
         const pctText = (pct !== undefined && pct !== null) ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%` : '—';
-        const priceText = live?.c ? `$${fmtNum(live.c)}` : '';
+        const priceText = live?.c ? `$ ${fmtNum(live.c)}` : '';
+        
+        // Obtener el HTML del Logo (con traducción interna inteligente del emisor)
+        const logoHtml = getLogoHtml(item.ticker, 'w-8 h-8');
         
         const div = document.createElement('div');
-        div.className = `asset-item glass-panel glass-panel-hover p-3 rounded-lg border flex items-center justify-between cursor-pointer transition-all duration-300 ${
+        div.className = `asset-item glass-panel glass-panel-hover p-2.5 rounded-lg border flex items-center justify-between cursor-pointer transition-all duration-300 gap-3 ${
           state.selectedTicker === item.ticker ? 'border-indigo-500 bg-indigo-950/20' : 'border-slate-800/80'
         }`;
         div.dataset.ticker = item.ticker;
         div.innerHTML = `
-          <div class="flex-1 min-w-0 pr-3">
-            <div class="flex items-center gap-2 mb-0.5">
-              <span class="font-bold text-slate-100 font-mono-financial text-sm">${item.ticker}</span>
-              <span class="text-[9px] font-bold text-emerald-400 bg-emerald-950/30 px-1.5 py-0.5 rounded border border-emerald-500/20">ON</span>
-              <span class="text-[10px] font-bold font-mono-financial ${pctColor} ml-auto">${pctText}</span>
+          ${logoHtml}
+          <div class="flex-1 min-w-0 pr-1">
+            <div class="flex items-center gap-1.5 mb-0.5">
+              <span class="font-bold text-slate-100 font-mono-financial text-xs leading-none">${item.ticker}</span>
+              <span class="text-[8px] font-bold text-emerald-400 bg-emerald-950/30 px-1 py-0.5 rounded border border-emerald-500/20 leading-none">ON</span>
+              <span class="text-[9px] font-bold font-mono-financial ${pctColor} ml-auto leading-none">${pctText}</span>
             </div>
-            <div class="text-[11px] text-slate-400 truncate">${item.nombre}</div>
-            ${priceText ? `<div class="text-[10px] text-slate-500 font-mono-financial mt-0.5">${priceText}</div>` : ''}
+            <div class="text-[10px] text-slate-400 truncate leading-tight">${item.nombre}</div>
+            ${priceText ? `<div class="text-[9px] text-slate-500 font-mono-financial mt-0.5 leading-none font-semibold">${priceText}</div>` : ''}
           </div>
-          <button class="fav-toggle p-1 rounded hover:bg-slate-800 transition-colors" data-ticker="${item.ticker}">
+          <button class="fav-toggle p-1 rounded hover:bg-slate-800 transition-colors shrink-0" data-ticker="${item.ticker}">
             <i data-lucide="star" class="w-3.5 h-3.5 ${isFav ? 'fill-amber-400 text-amber-400' : 'text-slate-500'}"></i>
           </button>
         `;
@@ -1434,23 +1682,29 @@
         const pctColor = (pct >= 0) ? 'text-emerald-400' : 'text-rose-400';
         const pctText = (pct !== undefined && pct !== null) ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%` : '—';
         
+        // Obtener el HTML del Logo para la watchlist
+        const logoHtml = getLogoHtml(asset.ticker, 'w-10 h-10');
+        
         const card = document.createElement('div');
-        card.className = "glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800/80 cursor-pointer flex flex-col gap-3";
+        card.className = "glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800/80 cursor-pointer flex flex-col gap-4";
         card.addEventListener('click', (e) => {
           if (e.target.closest('.remove-fav-btn')) return;
           loadActiveTickerData(asset.ticker);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
         card.innerHTML = `
-          <div class="flex items-start justify-between">
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="font-bold text-lg text-slate-100 font-mono-financial">${asset.ticker}</span>
-                <span class="text-[10px] font-semibold ${isON ? 'text-emerald-400 bg-emerald-950/40 border-emerald-500/20' : 'text-indigo-400 bg-indigo-950/40 border-indigo-500/20'} px-2 py-0.5 rounded-full border">${isON ? 'ON' : asset.sector}</span>
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              ${logoHtml}
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-base text-slate-100 font-mono-financial leading-none">${asset.ticker}</span>
+                  <span class="text-[9px] font-semibold ${isON ? 'text-emerald-400 bg-emerald-950/40 border-emerald-500/20' : 'text-indigo-400 bg-indigo-950/40 border-indigo-500/20'} px-2 py-0.5 rounded-full border leading-none shrink-0">${isON ? 'ON' : asset.sector}</span>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-1.5 truncate max-w-[150px] leading-tight">${asset.nombre}</div>
               </div>
-              <div class="text-xs text-slate-400 mt-1 truncate max-w-[200px]">${asset.nombre}</div>
             </div>
-            <button class="remove-fav-btn text-slate-600 hover:text-rose-400 p-1 rounded hover:bg-slate-800/60" data-ticker="${asset.ticker}">
+            <button class="remove-fav-btn text-slate-600 hover:text-rose-400 p-1 rounded hover:bg-slate-800/60 shrink-0" data-ticker="${asset.ticker}">
               <i data-lucide="x" class="w-4 h-4"></i>
             </button>
           </div>
