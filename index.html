@@ -424,16 +424,16 @@
     <section class="lg:col-span-9 flex flex-col gap-6 min-w-0">
       
       <!-- WATCHLIST (PANEL DE FAVORITOS EN LA PARTE SUPERIOR) -->
-      <div class="glass-panel p-6 rounded-2xl shadow-xl border border-slate-800/80">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
+      <div class="glass-panel p-3 rounded-xl shadow-lg border border-slate-800/80">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
           <div>
-            <h3 class="text-sm font-extrabold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-              <i data-lucide="star" class="w-4 h-4 text-amber-400"></i> Mi Panel de Favoritos
+            <h3 class="text-xs font-extrabold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="star" class="w-3.5 h-3.5 text-amber-400"></i> Mi Panel de Favoritos
             </h3>
-            <p class="text-xs text-slate-500 mt-1">Monitoreo rápido de tus activos destacados en tiempo real.</p>
+            <p class="text-[10px] text-slate-500 mt-0.5">Monitoreo rápido de tus activos destacados.</p>
           </div>
         </div>
-        <div id="watchlist-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+        <div id="watchlist-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2"></div>
       </div>
 
       <!-- ASSET HEADER -->
@@ -2112,39 +2112,39 @@
         const pctText = (pct !== undefined && pct !== null) ? `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%` : '—';
         
         // Obtener el HTML del Logo para la watchlist
-        const logoHtml = getLogoHtml(asset.ticker, 'w-10 h-10');
+        const logoHtml = getLogoHtml(asset.ticker, 'w-7 h-7');
         
         const card = document.createElement('div');
-        card.className = "glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800/80 cursor-pointer flex flex-col gap-4";
+        card.className = "glass-panel glass-panel-hover p-2 rounded-xl border border-slate-800/80 cursor-pointer flex flex-col gap-2";
         card.addEventListener('click', (e) => {
           if (e.target.closest('.remove-fav-btn')) return;
           loadActiveTickerData(asset.ticker);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
         card.innerHTML = `
-          <div class="flex items-start justify-between gap-3">
-            <div class="flex items-center gap-3 min-w-0">
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-center gap-2 min-w-0">
               ${logoHtml}
               <div class="min-w-0">
-                <div class="flex items-center gap-2">
-                  <span class="font-bold text-base text-slate-100 font-mono-financial leading-none">${asset.ticker}</span>
-                  <span class="text-[9px] font-semibold ${isON ? 'text-emerald-400 bg-emerald-950/40 border-emerald-500/20' : 'text-indigo-400 bg-indigo-950/40 border-indigo-500/20'} px-2 py-0.5 rounded-full border leading-none shrink-0">${isON ? 'ON' : asset.sector}</span>
+                <div class="flex items-center gap-1.5">
+                  <span class="font-bold text-sm text-slate-100 font-mono-financial leading-none">${asset.ticker}</span>
+                  <span class="text-[8px] font-semibold ${isON ? 'text-emerald-400 bg-emerald-950/40 border-emerald-500/20' : 'text-indigo-400 bg-indigo-950/40 border-indigo-500/20'} px-1.5 py-0.5 rounded-full border leading-none shrink-0">${isON ? 'ON' : asset.sector}</span>
                 </div>
-                <div class="text-[11px] text-slate-400 mt-1.5 truncate max-w-[150px] leading-tight">${asset.nombre}</div>
+                <div class="text-[10px] text-slate-400 mt-0.5 truncate max-w-[120px] leading-tight">${asset.nombre}</div>
               </div>
             </div>
-            <button class="remove-fav-btn text-slate-600 hover:text-rose-400 p-1 rounded hover:bg-slate-800/60 shrink-0" data-ticker="${asset.ticker}">
-              <i data-lucide="x" class="w-4 h-4"></i>
+            <button class="remove-fav-btn text-slate-600 hover:text-rose-400 p-0.5 rounded hover:bg-slate-800/60 shrink-0" data-ticker="${asset.ticker}">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
             </button>
           </div>
-          <div class="grid grid-cols-2 gap-3 pt-3 border-t border-slate-800/50">
+          <div class="grid grid-cols-2 gap-2 pt-1.5 border-t border-slate-800/50">
             <div>
-              <div class="text-[10px] text-slate-500 uppercase font-semibold">Precio ARS</div>
-              <div class="text-sm font-bold text-slate-200 font-mono-financial">${price ? `$${fmtNum(price)}` : '— —'}</div>
+              <div class="text-[9px] text-slate-500 uppercase font-semibold">ARS</div>
+              <div class="text-xs font-bold text-slate-200 font-mono-financial">${price ? `$${fmtNum(price)}` : '— —'}</div>
             </div>
             <div>
-              <div class="text-[10px] text-slate-500 uppercase font-semibold">Var. Día</div>
-              <div class="text-sm font-bold ${pctColor} font-mono-financial">${pctText}</div>
+              <div class="text-[9px] text-slate-500 uppercase font-semibold">Var.</div>
+              <div class="text-xs font-bold ${pctColor} font-mono-financial">${pctText}</div>
             </div>
           </div>
         `;
